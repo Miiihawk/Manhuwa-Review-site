@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { userRepository } from "../repositories/user.repository";
-import type { RegisterInput } from "../validators/user.schema.ts";
+import type { RegisterInput, LoginInput } from "../validators/user.schema";
 import { Role } from "../../../../generated/prisma/client";
 
 const BCRYPT_COST = 12;
@@ -22,6 +22,41 @@ export class UserService {
       email: input.email,
       passwordHash,
       role: Role.USER, // default role
+    });
+  }
+
+  async authenticate(input: LoginInput) {
+    const user = await userRepository.findByEmail(input.email);
+    if (!user) return null;
+    const valid = await bcrypt.compare(input.password, user.passwordHash);
+    if (!valid) return null;
+    return user;
+  }
+
+  async seedAdmin() {
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.error(
+        "Admin email or password not set in environment variables.",
+      );
+      return;
+    }
+
+    const existingAdmin = await userRepository.findFirstAdmin();
+    if (existingAdmin) {
+      console.log("Admin user already exists.");
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+
+    const adminUser = await userRepository.create({
+      username: "admin",
+      email,
+      passwordHash,
+      role: Role.ADMIN,
     });
   }
 }
