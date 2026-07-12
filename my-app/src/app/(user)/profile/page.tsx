@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { User, Mail, Shield, Calendar, ArrowLeft, Edit2 } from "lucide-react";
+import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar"; // Import your fresh navbar layout module!
 
 export default function ProfilePage() {

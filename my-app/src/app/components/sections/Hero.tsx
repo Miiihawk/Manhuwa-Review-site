@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/dist/client/link";
 
 interface ComicItem {
   title: string;
@@ -83,9 +84,13 @@ export default function Hero({ comicList }: HeroProps) {
           </AnimatePresence>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <button className="rounded-full bg-pink-600 px-8 py-3 text-sm font-black tracking-wide text-white transition hover:bg-pink-500 shadow-lg shadow-pink-600/20">
+            <Link
+              href="/comicseries"
+              title="Series Catalog"
+              className="inline-block rounded-full bg-pink-600 px-8 py-3 text-sm font-black tracking-wide text-white transition hover:bg-pink-500 shadow-lg shadow-pink-600/20 text-center"
+            >
               Browse Comics
-            </button>
+            </Link>
             <button
               onClick={handleSwipeNext}
               className="rounded-full border border-white/20 bg-white/5 px-8 py-3 text-sm font-black tracking-wide text-white transition hover:bg-white/10"
@@ -123,7 +128,9 @@ export default function Hero({ comicList }: HeroProps) {
             </div>
 
             {/* Card 1: Main Front Card with full drag-and-swipe control! */}
-            <AnimatePresence>
+            <AnimatePresence mode="popLayout">
+              {" "}
+              {/* Added mode="popLayout" to keep layout smooth during swaps */}
               <motion.div
                 key={`card-${activeComic.title}`}
                 style={{ zIndex: 30 }}
@@ -143,8 +150,10 @@ export default function Hero({ comicList }: HeroProps) {
                   rotate: 15,
                   transition: { duration: 0.3 },
                 }}
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                // 1. Explicitly set x: 0 and rotate: 0 on entry so it doesn't copy the old card
+                initial={{ scale: 0.95, opacity: 0, x: 0, rotate: 0 }}
+                // 2. Explicitly force it back to center (x: 0, rotate: 0) when it animates in
+                animate={{ scale: 1, opacity: 1, x: 0, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
               >
                 <img
