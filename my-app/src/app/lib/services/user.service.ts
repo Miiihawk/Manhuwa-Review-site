@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { userRepository } from "../repositories/user.repository";
 import type { RegisterInput } from "../validators/user.schema.ts";
+import { Role } from "../../../../generated/prisma/client";
 
 const BCRYPT_COST = 12;
 
@@ -16,11 +17,11 @@ export class UserService {
 
     const passwordHash = await bcrypt.hash(input.password, BCRYPT_COST);
 
-    const user = await userRepository.create({
+    return userRepository.create({
       username: input.username,
       email: input.email,
       passwordHash,
-      role: "USER",
+      role: Role.USER, // default role
     });
   }
 }
