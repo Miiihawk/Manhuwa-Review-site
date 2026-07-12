@@ -3,11 +3,75 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Trash2, ArrowRightLeft, Library } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
 
 // Pulling your exact data structure directly from comic.ts
 import { featuredCovers } from "../../data/comic";
+
+function IconBase({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      {children}
+    </svg>
+  );
+}
+
+function ArrowLeftIcon({ className = "" }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </IconBase>
+  );
+}
+
+function Trash2Icon({ className = "" }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M6 6l1 14h10l1-14" />
+    </IconBase>
+  );
+}
+
+function ArrowRightLeftIcon({ className = "" }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <path d="m16 3 4 4-4 4" />
+      <path d="M20 7H4" />
+      <path d="m8 21-4-4 4-4" />
+      <path d="M4 17h16" />
+    </IconBase>
+  );
+}
+
+function LibraryIcon({ className = "" }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <path d="M3 19.5V5.75A1.75 1.75 0 0 1 4.75 4h14.5A1.75 1.75 0 0 1 21 5.75V19.5" />
+      <path d="M7 4v16" />
+      <path d="M11 4v16" />
+    </IconBase>
+  );
+}
 
 type ReadingStatus =
   | "Reading"
@@ -63,14 +127,14 @@ export default function ReadingListPage() {
           href="/user/dashboard"
           className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-[#f6a1ff] mb-8 group"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          <ArrowLeftIcon className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Back to Dashboard
         </Link>
 
         {/* --- HEADER TITLE BANNER --- */}
         <section className="rounded-4xl border border-white/10 bg-white/5 p-6 backdrop-blur-2xl sm:p-8 shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
           <div className="flex items-center gap-2.5">
-            <Library className="h-5 w-5 text-[#f6a1ff]" />
+            <LibraryIcon className="h-5 w-5 text-[#f6a1ff]" />
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#f6a1ff]/90">
               Personal Library
             </p>
@@ -139,13 +203,13 @@ export default function ReadingListPage() {
                           title="Move to another list"
                           className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded-lg bg-white/10 hover:bg-[#ff018f] border border-white/10 text-[11px] font-bold text-white transition-all duration-150 active:scale-95"
                         >
-                          <ArrowRightLeft className="h-3 w-3" /> Move
+                          <ArrowRightLeftIcon className="h-3 w-3" /> Move
                         </button>
                         <button
                           title="Remove from library entirely"
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500 border border-red-500/20 hover:text-white transition-all duration-150 active:scale-95"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2Icon className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </div>
