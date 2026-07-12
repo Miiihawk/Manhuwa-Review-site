@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BrandLogo from "../../components/layout/BrandLogo";
+import RegisterForm from "../../components/forms/RegisterForm";
 
 export default function RegisterPage() {
   return (
@@ -34,62 +35,7 @@ export default function RegisterPage() {
                 </h2>
               </div>
 
-              <form className="space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-white/75">
-                    Username
-                  </span>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder="Choose a username"
-                    className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-white/75">
-                    Email address
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/30"
-                  />
-                </label>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-white/75">
-                      Password
-                    </span>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Create password"
-                      className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-                    />
-                  </label>
-                </div>
-
-                <label className="flex items-start gap-3 text-sm text-white/65">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-[#ff018f] focus:ring-[#ff018f]"
-                  />
-                  <span>
-                    I agree to receive updates and accept the account terms.
-                  </span>
-                </label>
-
-                <button
-                  type="submit"
-                  className="inline-flex h-14 w-full items-center justify-center rounded-full bg-[#f6a1ff] px-6 text-base font-semibold text-black transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-110"
-                >
-                  Sign up
-                </button>
-              </form>
+              <RegisterForm />
 
               <p className="mt-6 text-center text-sm text-white/65">
                 Already have an account?{" "}
