@@ -1,0 +1,22 @@
+/* Ticker track layout to hold original + cloned elements side-by-side without wrapping */
+.ticker-track {
+  display: flex;
+  width: max-content;
+  gap: 1.25rem; /* matches gap-5 */
+  animation: scrollTicker 25s linear infinite;
+}
+
+/* Pause the scrolling animation gracefully whenever a user hovers a cover card */
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollTicker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Moves the track by exactly half its length (the first full set of cards) */
+    transform: translateX(-50%);
+  }
+}
