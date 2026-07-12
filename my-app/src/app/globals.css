@@ -18,6 +18,9 @@ html {
 
 body {
   min-height: 100vh;
+  /* Add this line right here 👇 */
+  background-attachment: fixed;
+
   background:
     radial-gradient(
       circle at top left,
