@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Star, Heart, ExternalLink } from "lucide-react";
+import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
 
 // Pulling your exact data structure directly from comic.ts

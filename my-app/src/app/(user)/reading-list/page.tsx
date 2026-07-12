@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
 
 // Pulling your exact data structure directly from comic.ts
