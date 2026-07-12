@@ -32,6 +32,33 @@ export class UserService {
     if (!valid) return null;
     return user;
   }
+
+  async seedAdmin() {
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.error(
+        "Admin email or password not set in environment variables.",
+      );
+      return;
+    }
+
+    const existingAdmin = await userRepository.findFirstAdmin();
+    if (existingAdmin) {
+      console.log("Admin user already exists.");
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+
+    const adminUser = await userRepository.create({
+      username: "admin",
+      email,
+      passwordHash,
+      role: Role.ADMIN,
+    });
+  }
 }
 
 export const userService = new UserService();

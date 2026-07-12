@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BrandLogo from "../../components/layout/BrandLogo";
+import LoginForm from "../../components/forms/LoginForm";
 
 export default function LoginPage() {
   return (
@@ -33,47 +34,7 @@ export default function LoginPage() {
                 </h2>
               </div>
 
-              <form className="space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-white/75">
-                    Email address
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/30"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-white/75">
-                    Password
-                  </span>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-                  />
-                </label>
-
-                <div className="flex items-center justify-end text-sm text-white/65">
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-[#f6a1ff] hover:text-white"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-
-                <button
-                  type="submit"
-                  className="inline-flex h-14 w-full items-center justify-center rounded-full bg-[#ff018f] px-6 text-base font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 hover:brightness-110"
-                >
-                  Log in
-                </button>
-              </form>
+              <LoginForm />
 
               <p className="mt-6 text-center text-sm text-white/65">
                 Don&apos;t have an account?{" "}

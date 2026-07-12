@@ -29,6 +29,12 @@ export class UserRepository {
     });
   }
 
+  findFirstAdmin() {
+    return prisma.user.findFirst({
+      where: { role: Role.ADMIN },
+    });
+  }
+
   //Create
   create(data: {
     username: string;
