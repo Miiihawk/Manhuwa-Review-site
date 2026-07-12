@@ -13,13 +13,13 @@ export default function Home() {
           <BrandLogo href="/" className="max-w-[16rem]" />
           <div className="flex items-center gap-3 sm:gap-4">
             <Link
-              href="/auth/login"
+              href="/login"
               className="inline-flex h-11 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 text-sm font-black tracking-wide text-white/90 backdrop-blur-md transition-colors duration-200 hover:border-[#ff018f]/70 hover:bg-white/10"
             >
               Log in
             </Link>
             <Link
-              href="/auth/register"
+              href="/register"
               className="inline-flex h-11 items-center justify-center rounded-full border border-[#f6a1ff]/70 bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(255,24,143,0.34)]"
             >
               Sign up
