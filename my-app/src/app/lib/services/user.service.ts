@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { userRepository } from "../repositories/user.repository";
-import type { RegisterInput } from "../validators/user.schema.ts";
+import type { RegisterInput, LoginInput } from "../validators/user.schema";
 import { Role } from "../../../../generated/prisma/client";
 
 const BCRYPT_COST = 12;
@@ -23,6 +23,14 @@ export class UserService {
       passwordHash,
       role: Role.USER, // default role
     });
+  }
+
+  async authenticate(input: LoginInput) {
+    const user = await userRepository.findByEmail(input.email);
+    if (!user) return null;
+    const valid = await bcrypt.compare(input.password, user.passwordHash);
+    if (!valid) return null;
+    return user;
   }
 }
 
