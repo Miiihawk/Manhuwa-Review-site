@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum ComicStatus {
+  ONGOING
+  COMPLETED
+  CANCELLED
+  DROPPED
+  MASS_RELEASED
+  COMING_SOON
+  HIATUS
+}
+
+enum ReadingListStatus {
+  READING
+  PLAN_TO_READ
+  COMPLETED
+  REREADING
+  PAUSED
+  DROPPED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+  ACTIONED
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  SPOILER
+  OFF_TOPIC
+  OTHER
+}
+
+enum NotificationType {
+  NEW_COMMENT_REPLY
+  NEW_REVIEW_ON_FAVORITE
+  ADMIN_ANNOUNCEMENT
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  email         String    @unique
+  passwordHash  String
+  profilePic    String?
+  bio           String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  reviews         Review[]
+  favorites       Favorite[]
+  comments        Comment[]
+  notifications   Notification[]
+  comicsAdded     Comic[]           @relation("ComicCreatedBy")
+  listEntries     ReadingList[]
+  reportsFiled    Report[]          @relation("ReportsFiled")
+  reportsResolved Report[]          @relation("ReportsResolved")
+}
+
+// Admin-editable table, not a hardcoded enum — new categories don't require
+// a code change and migration.
+model ComicCategory {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique // "Manga", "Manhwa", "Manhua", "Webcomic"
+  slug   String  @unique
+  comics Comic[]
+}
+
+model Comic {
+  id                Int           @id @default(autoincrement())
+  title             String
+  slug              String        @unique
+  synopsis          String
+  coverPhoto        String
+  author            String
+  averageRating     Int?          // denormalized cache of Review.rating average
+  publicationStatus ComicStatus   @default(ONGOING)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  categoryId    Int
+  category      ComicCategory @relation(fields: [categoryId], references: [id])
+
+  createdById   Int
+  createdBy     User          @relation("ComicCreatedBy", fields: [createdById], references: [id])
+
+  genres        ComicGenre[]
+  sources       ComicSource[]
+  reviews       Review[]
+  favorites     Favorite[]
+  comments      Comment[]
+  listEntries   ReadingList[]
+
+  @@index([categoryId])
+  @@index([publicationStatus])
+}
+
+model Genre {
+  id     Int          @id @default(autoincrement())
+  name   String       @unique
+  slug   String       @unique
+  comics ComicGenre[]
+}
+
+model ComicGenre {
+  comicId Int
+  genreId Int
+  comic   Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([comicId, genreId])
+}
+
+// Multiple external reading links per comic (official site, mirrors, etc.)
+model ComicSource {
+  id       Int    @id @default(autoincrement())
+  comicId  Int
+  name     String // e.g. "Official site", "Webtoon app", "Tapas"
+  url      String
+
+  comic    Comic  @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@index([comicId])
+}
+
+// Rating and written review are merged into one row per (user, comic).
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int      // 1-5
+  review    String?  // optional — allows score-only "quick ratings"
+  userId    Int
+  comicId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic     @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  reports   Report[]
+
+  @@unique([userId, comicId]) // one review per user per comic — re-review = upsert
+  @@index([comicId])
+}
+
+model Favorite {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  comicId   Int
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId])
+}
+
+// A user's personal tracking list — different from Favorite (a simple
+// bookmark). One row per (user, comic) holding where they are with it.
+model ReadingList {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  comicId   Int
+  status    ReadingListStatus
+  updatedAt DateTime          @updatedAt
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId]) // status change = update, not new row
+  @@index([userId, status])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  comicId   Int?
+  reviewId  Int?
+  parentId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic?    @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  review    Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("Replies")
+  reports   Report[]
+
+  @@index([comicId])
+  @@index([reviewId])
+}
+
+// A user-filed flag on a review or comment — feeds the admin moderation
+// queue. Exactly one of reviewId/commentId is set (enforced in the service
+// layer — Prisma can't express that constraint natively).
+model Report {
+  id           Int          @id @default(autoincrement())
+  reporterId   Int
+  reviewId     Int?
+  commentId    Int?
+  reason       ReportReason
+  status       ReportStatus @default(PENDING)
+  resolvedById Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  reporter     User     @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  review       Review?  @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  comment      Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  resolvedBy   User?    @relation("ReportsResolved", fields: [resolvedById], references: [id])
+
+  @@index([status])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  message   String
+  relatedId Int?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
