@@ -8,5 +8,10 @@ export class ReviewService {
     if (!comic) {
       throw new Error("Comic not found");
     }
+
+    const review = await reviewRepository.upsert(userId, comic.id, {
+      rating: input.rating,
+      review: input.review,
+    });
   }
 }
