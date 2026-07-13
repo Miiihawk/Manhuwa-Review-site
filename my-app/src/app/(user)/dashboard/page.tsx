@@ -1,10 +1,12 @@
-import Image from "next/image";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import "@/app/styles/dashboard.css";
 
-// Dynamic Local Mock Datasets
-import { featuredCovers } from "../../data/comic";
+// Mock data — kept as a safe fallback if the DB read fails
+/* import { featuredCovers } from "../../data/comic"; */
+
+// Real data layer
+import { comicService } from "@/app/lib/services/comic.service";
 
 // Modular Section Components
 import Hero from "../../components/sections/Hero";
@@ -14,7 +16,28 @@ import RecentlyAddedSection from "../../components/sections/RecentlyAddedSection
 import BrowseGenreSection from "../../components/sections/BrowseGenreSection";
 import CommunityReviewSection from "../../components/sections/CommunityReviewSection";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic"; // Ensures the page is always rendered fresh on each request
+
+export default async function DashboardPage() {
+  let heroComics: {
+    title: string;
+    image: string;
+    tag: string;
+    description?: string;
+  }[] = [];
+
+  try {
+    const comics = await comicService.listComics();
+    heroComics = comics.map((comic) => ({
+      title: comic.title,
+      image: comic.coverPhoto,
+      tag: comic.publicationStatus,
+      description: comic.synopsis ?? "No synopsis yet.",
+    }));
+  } catch (error) {
+    console.error("Error fetching comics:", error);
+  }
+
   return (
     <main className="min-h-screen bg-[#0b021a] text-white overflow-x-hidden flex flex-col justify-between">
       {/* Immersive Top Banner Container */}
@@ -22,7 +45,7 @@ export default function DashboardPage() {
         {/* Reusable Header Navbar Component */}
         <Navbar />
         {/* Dynamic Interactive Swipe Deck Hero */}
-        <Hero comicList={featuredCovers} />
+        {heroComics.length > 0 && <Hero comicList={heroComics} />}
       </div>
 
       {/* Grid Dashboard Content Core Stack */}
