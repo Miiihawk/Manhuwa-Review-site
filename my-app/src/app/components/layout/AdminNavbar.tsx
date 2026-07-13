@@ -2,8 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bell, BookOpen, Folder, LogOut, MessageSquare, Tag, User, Users } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  Folder,
+  LogOut,
+  MessageSquare,
+  Tag,
+  User,
+  Users,
+} from "lucide-react";
 import BrandLogo from "./BrandLogo";
+import LogoutButton from "./LogoutButton";
 
 const mockNotifications = [
   {
@@ -57,7 +67,10 @@ export default function AdminNavbar() {
             ))}
           </div>
 
-          <div className="hidden h-6 w-px bg-white/20 md:block" aria-hidden="true" />
+          <div
+            className="hidden h-6 w-px bg-white/20 md:block"
+            aria-hidden="true"
+          />
 
           <div className="relative">
             <button
@@ -119,13 +132,8 @@ export default function AdminNavbar() {
             <User className="h-[1.15rem] w-[1.15rem]" />
           </Link>
 
-          <Link
-            href="/auth/logout"
-            title="Logout"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
-          >
-            <LogOut className="h-[1.15rem] w-[1.15rem]" />
-          </Link>
+          {/* 6. Logout */}
+          <LogoutButton />
         </nav>
       </div>
     </header>
