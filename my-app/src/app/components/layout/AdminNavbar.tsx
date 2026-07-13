@@ -47,7 +47,7 @@ export default function AdminNavbar() {
                 href={href}
                 title={label}
                 aria-label={label}
-                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-[#ff018f]/20 hover:text-white"
+                className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
               >
                 <Icon className="h-4 w-4" />
                 <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
@@ -59,11 +59,11 @@ export default function AdminNavbar() {
 
           <div className="hidden h-6 w-px bg-white/20 md:block" aria-hidden="true" />
 
-          <div className="relative">
+          <div className="group relative">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
               aria-label="Notifications"
             >
               <Bell className="h-[1.15rem] w-[1.15rem] transition duration-200 group-hover:rotate-12" />
@@ -71,6 +71,10 @@ export default function AdminNavbar() {
                 3
               </span>
             </button>
+
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Notifications
+            </span>
 
             {isOpen && (
               <>
@@ -112,19 +116,27 @@ export default function AdminNavbar() {
           </div>
 
           <Link
-            href="/admin/dashboard"
+            href="/admin/profile"
             title="Profile"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
+            aria-label="Profile"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
           >
             <User className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Profile
+            </span>
           </Link>
 
           <Link
             href="/auth/logout"
             title="Logout"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
+            aria-label="Logout"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
           >
             <LogOut className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Logout
+            </span>
           </Link>
         </nav>
       </div>

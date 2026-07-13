@@ -46,7 +46,7 @@ export default function AdminDashboardPage() {
 								Admin Dashboard
 							</p>
 							<h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
-								Admin dashboard.
+								Welcome admin_name.
 							</h1>
 						</div>
 

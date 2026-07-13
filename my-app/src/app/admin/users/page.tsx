@@ -48,9 +48,9 @@ export default function AdminUsersPage() {
 				<div className="mb-6 flex items-center justify-between gap-4">
 					<Link
 						href="/admin/dashboard"
-						className="inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
+						className="group inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
 					>
-						<ArrowLeft className="h-4 w-4" />
+						<ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
 						Back to dashboard
 					</Link>
 				</div>

@@ -46,17 +46,21 @@ export default function Navbar() {
           <Link
             href="/comicseries"
             title="Series Catalog"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-[#ff018f] active:scale-95"
+            aria-label="Series Catalog"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-[#ff018f] active:scale-95"
           >
             <Layers className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Series Catalog
+            </span>
           </Link>
 
           {/* 2. Notification Bell Dropdown Controller */}
-          <div className="relative">
+          <div className="group relative">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
               aria-label="Notifications"
             >
               <Bell className="h-[1.15rem] w-[1.15rem] transition duration-200 group-hover:rotate-12" />
@@ -64,6 +68,10 @@ export default function Navbar() {
                 3
               </span>
             </button>
+
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Notifications
+            </span>
 
             {/* --- NOTIFICATION POPUP PANEL --- */}
             {isOpen && (
@@ -112,36 +120,52 @@ export default function Navbar() {
           <Link
             href="/favorites"
             title="Favorites"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-pink-400 active:scale-95"
+            aria-label="Favorites"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-pink-400 active:scale-95"
           >
             <Heart className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Favorites
+            </span>
           </Link>
 
           {/* 4. Reading List */}
           <Link
             href="/reading-list"
             title="Reading List"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
+            aria-label="Reading List"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
           >
             <BookOpen className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Reading List
+            </span>
           </Link>
 
           {/* 5. Profile */}
           <Link
             href="/profile"
             title="Profile"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
+            aria-label="Profile"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
           >
             <User className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Profile
+            </span>
           </Link>
 
           {/* 6. Logout */}
           <Link
             href="/auth/logout"
             title="Logout"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
+            aria-label="Logout"
+            className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/60 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
           >
             <LogOut className="h-[1.15rem] w-[1.15rem]" />
+            <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+              Logout
+            </span>
           </Link>
         </nav>
       </div>
