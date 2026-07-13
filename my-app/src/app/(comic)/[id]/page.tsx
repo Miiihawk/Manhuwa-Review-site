@@ -74,6 +74,7 @@ export default function StaticComicDetailsPage() {
             <TabsContent
               activeSubTab={activeSubTab}
               comic={comic}
+              slug={comicId}
               isReviewModalOpen={isReviewModalOpen}
               setIsReviewModalOpen={setIsReviewModalOpen}
             />

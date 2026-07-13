@@ -29,6 +29,12 @@ export class ReviewService {
   listReviews(comicId: number) {
     return reviewRepository.findByComic(comicId);
   }
+
+  async listReviewsBySlug(slug: string) {
+    const comic = await comicRepository.findBySlug(slug);
+    if (!comic) return [];
+    return reviewRepository.findByComic(comic.id);
+  }
 }
 
 export const reviewService = new ReviewService();
