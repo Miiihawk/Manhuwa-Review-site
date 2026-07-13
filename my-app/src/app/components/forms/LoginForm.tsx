@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { signIn, getSession } from "next-auth/react";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,7 +31,15 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    const session = await getSession();
+    const role = (session?.user as any)?.role;
+
+    if (role === "ADMIN") {
+      router.push("/admin/dashboard");
+    } else {
+      router.push("/dashboard");
+    }
+
     router.refresh();
   }
   return (

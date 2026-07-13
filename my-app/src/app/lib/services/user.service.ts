@@ -59,6 +59,10 @@ export class UserService {
       role: Role.ADMIN,
     });
   }
+
+  async listUsers() {
+    return userRepository.findMany();
+  }
 }
 
 export const userService = new UserService();
