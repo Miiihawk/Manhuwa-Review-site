@@ -55,7 +55,7 @@ export default function AdminUsersPage() {
 					</Link>
 				</div>
 
-				<section className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_32px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8 lg:p-10">
+				<section>
 					<div className="flex flex-col gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
 						<div className="max-w-2xl">
 							<p className="text-xs font-semibold uppercase tracking-[0.45em] text-[#f6a1ff]">

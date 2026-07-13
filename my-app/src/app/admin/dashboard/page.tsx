@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
 			<div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(0,0,0,0.96)_0%,rgba(17,1,46,0.94)_45%,rgba(0,0,0,0.98)_100%)]" />
 
 			<div className="relative mx-auto max-w-7xl px-6 pb-10 pt-28 sm:px-10 lg:px-12">
-				<section className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_32px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8 lg:p-10">
+				<section>
 					<div className="flex flex-col gap-6 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
 						<div className="max-w-2xl">
 							<p className="text-xs font-semibold uppercase tracking-[0.45em] text-[#f6a1ff]">
@@ -89,41 +89,8 @@ export default function AdminDashboardPage() {
 						))}
 					</section>
 
-					<div className="mt-8 flex flex-wrap justify-center gap-3">
-						<Link
-							href="/admin/comics"
-							className="inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-[#11012e]/80 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/60 hover:bg-white/10"
-						>
-							Comic Management
-						</Link>
-						<Link
-							href="/admin/users"
-							className="inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-[#11012e]/80 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/60 hover:bg-white/10"
-						>
-							User Management
-						</Link>
-						<Link
-							href="/admin/reviews"
-							className="inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-[#11012e]/80 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/60 hover:bg-white/10"
-						>
-							Review Management
-						</Link>
-						<Link
-							href="/admin/genres"
-							className="inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-[#11012e]/80 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/60 hover:bg-white/10"
-						>
-							Genre Management
-						</Link>
-						<Link
-							href="/admin/categories"
-							className="inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-[#11012e]/80 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/60 hover:bg-white/10"
-						>
-							Category Management
-						</Link>
-					</div>
-
-					<section className="mt-8 flex justify-center">
-						<div className="w-full max-w-5xl rounded-3xl border border-white/10 bg-[#11012e]/70 p-5 sm:p-6">
+					<section className="mt-8">
+						<div className="w-full rounded-3xl border border-white/10 bg-[#11012e]/70 p-5 sm:p-6">
 							<div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
 								<div>
 									<p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f6a1ff]">

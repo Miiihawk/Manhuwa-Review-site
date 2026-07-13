@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bell, LogOut, User } from "lucide-react";
+import { Bell, BookOpen, Folder, LogOut, MessageSquare, Tag, User, Users } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 
 const mockNotifications = [
@@ -23,6 +23,14 @@ const mockNotifications = [
   },
 ];
 
+const adminShortcuts = [
+  { href: "/admin/comics", label: "Comic Management", icon: BookOpen },
+  { href: "/admin/users", label: "User Management", icon: Users },
+  { href: "/admin/reviews", label: "Review Management", icon: MessageSquare },
+  { href: "/admin/genres", label: "Genre Management", icon: Tag },
+  { href: "/admin/categories", label: "Category Management", icon: Folder },
+];
+
 export default function AdminNavbar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -32,6 +40,25 @@ export default function AdminNavbar() {
         <BrandLogo href="/admin/dashboard" className="max-w-[14rem]" compact />
 
         <nav className="relative flex shrink-0 items-center gap-1.5 sm:gap-3">
+          <div className="hidden items-center gap-1.5 md:flex">
+            {adminShortcuts.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                title={label}
+                aria-label={label}
+                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-[#ff018f]/20 hover:text-white"
+              >
+                <Icon className="h-4 w-4" />
+                <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+                  {label}
+                </span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="hidden h-6 w-px bg-white/20 md:block" aria-hidden="true" />
+
           <div className="relative">
             <button
               onClick={() => setIsOpen(!isOpen)}

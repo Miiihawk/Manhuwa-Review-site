@@ -94,7 +94,7 @@ export default function AdminComicEditPage() {
 					</Link>
 				</div>
 
-				<section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-[0_32px_120px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:p-8 lg:p-10">
+				<section>
 					<div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
 						<aside className="rounded-[1.75rem] border border-[#f6a1ff]/15 bg-[linear-gradient(180deg,rgba(17,1,46,0.92)_0%,rgba(0,0,0,0.82)_100%)] p-5 sm:p-6">
 							<div>

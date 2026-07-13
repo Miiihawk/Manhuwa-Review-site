@@ -32,7 +32,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 sm:px-10 lg:px-12 md:flex-row md:items-center md:justify-between">
         {/* Left Side: Brand Logo */}
         <div className="flex shrink-0 items-center gap-6">
-          <BrandLogo href="/user/dashboard" className="max-w-[14rem]" compact />
+          <BrandLogo href="/dashboard" className="max-w-[14rem]" compact />
         </div>
 
         {/* Center Balanced Search Form */}
@@ -110,7 +110,7 @@ export default function Navbar() {
 
           {/* 3. Favorites */}
           <Link
-            href="/user/favorites"
+            href="/favorites"
             title="Favorites"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-pink-400 active:scale-95"
           >
@@ -119,7 +119,7 @@ export default function Navbar() {
 
           {/* 4. Reading List */}
           <Link
-            href="/user/reading-list"
+            href="/reading-list"
             title="Reading List"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
           >
@@ -128,7 +128,7 @@ export default function Navbar() {
 
           {/* 5. Profile */}
           <Link
-            href="/user/profile"
+            href="/profile"
             title="Profile"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-95"
           >
