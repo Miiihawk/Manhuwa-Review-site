@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import Navbar from "../../components/layout/Navbar";
 import ComicSidebar from "./components/ComicSidebar";
 import ComicTabs from "./components/ComicTabs";
@@ -12,7 +13,9 @@ import { featuredCovers } from "../../data/comic";
 export type TabType = "synopsis" | "reviews" | "sources";
 
 export default function StaticComicDetailsPage() {
-  const comic = featuredCovers?.[0];
+  const params = useParams<{ id?: string }>();
+  const comicId = typeof params.id === "string" ? params.id : "";
+  const comic = featuredCovers.find((entry) => entry.id === comicId);
   const [activeSubTab, setActiveSubTab] = useState<TabType>("reviews");
   // Shared state controlling the popup visibility globally
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
