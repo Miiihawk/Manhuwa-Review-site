@@ -39,7 +39,7 @@ export default async function FeaturedCoversSection() {
           {loopingCovers.map((cover, index) => (
             <Link
               key={`${cover.title}-${index}`}
-              href={`/comic/${cover.id}`}
+              href={`/${cover.id}`}
               className="group w-52 shrink-0 block overflow-hidden rounded-3xl bg-white/5 transition duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(242,112,156,0.25)] border border-white/5"
             >
               <div className="relative aspect-[2/3]">

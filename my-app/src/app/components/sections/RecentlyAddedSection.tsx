@@ -1,9 +1,23 @@
-// src/app/components/sections/RecentlyAddedSection.tsx
 import ComicCard from "../cards/ComicCard";
-import { featuredCovers } from "../../data/comic";
+import { comicService } from "@/app/lib/services/comic.service";
 
-export default function RecentlyAddedSection() {
-  const recentComics = featuredCovers.slice().reverse();
+export default async function RecentlyAddedSection() {
+  let recentComics: {
+    id: string;
+    title: string;
+    image: string;
+    tag: string;
+  }[] = [];
+
+  try {
+    const rows = await comicService.listRecentlyAdded();
+    recentComics = rows.map((comic) => ({
+      id: comic.slug,
+      title: comic.title,
+      image: comic.coverPhoto,
+      tag: comic.publicationStatus,
+    }));
+  } catch {}
 
   return (
     <section className="w-full">
