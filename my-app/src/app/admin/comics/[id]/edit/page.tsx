@@ -3,15 +3,18 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-	ArrowLeft,
-	BookOpen,
-	Plus,
-	Save,
-	Sparkles,
-	Tag,
-	User,
-} from "lucide-react";
+import { useParams } from "next/navigation";
+import { ArrowLeft, BookOpen, Plus, Save, Sparkles, Tag, User } from "lucide-react";
+import { featuredCovers } from "../../../../data/comic";
+
+const coverOptions = featuredCovers.map((comic) => ({
+	id: comic.id ?? comic.title.toLowerCase().replace(/\s+/g, "-"),
+	title: comic.title,
+	image: comic.image,
+	type: comic.type,
+	tag: comic.tag,
+	description: comic.description ?? "No description provided yet.",
+}));
 
 const genreChoices = [
 	"Action",
@@ -24,17 +27,42 @@ const genreChoices = [
 	"Thriller",
 ];
 
-export default function AdminComicCreatePage() {
+export default function AdminComicEditPage() {
+	const params = useParams<{ id?: string }>();
+	const comicId = typeof params.id === "string" ? params.id : "";
+	const matchedCover = coverOptions.find((cover) => cover.id === comicId);
+
+	if (!matchedCover) {
+		return (
+			<main className="relative min-h-screen overflow-hidden bg-black text-white">
+				<div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(0,0,0,0.96)_0%,rgba(17,1,46,0.92)_45%,rgba(0,0,0,0.99)_100%)]" />
+				<div className="relative mx-auto max-w-4xl px-6 pb-12 pt-28 sm:px-10 lg:px-12">
+					<section className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-2xl">
+						<p className="text-sm font-semibold text-[#f6a1ff]">Comic not found</p>
+						<p className="mt-3 text-white/70">This edit page needs a valid comic id in the URL.</p>
+						<Link
+							href="/admin/comics"
+							className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
+						>
+							<ArrowLeft className="h-4 w-4" />
+							Back to comics
+						</Link>
+					</section>
+				</div>
+			</main>
+		);
+	}
+
 	const [formData, setFormData] = useState({
-		title: "",
-		alternativeName: "",
-		slug: "",
-		author: "",
-		status: "",
-		category: "",
-		genres: [] as string[],
-		coverPhoto: "",
-		synopsis: "",
+		title: matchedCover.title,
+		alternativeName: `Alternative title`,
+		slug: matchedCover.id,
+		author: "Fanmison / Luminara",
+		status: "ONGOING",
+		category: matchedCover.type,
+		genres: ["Action", "Fantasy"],
+		coverPhoto: matchedCover.image,
+		synopsis: matchedCover.description,
 	});
 
 	const toggleGenre = (genre: string) => {
@@ -71,10 +99,10 @@ export default function AdminComicCreatePage() {
 						<aside className="rounded-[1.75rem] border border-[#f6a1ff]/15 bg-[linear-gradient(180deg,rgba(17,1,46,0.92)_0%,rgba(0,0,0,0.82)_100%)] p-5 sm:p-6">
 							<div>
 								<p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#fff7e0]">
-									Create Form
+									Edit Form
 								</p>
 								<h2 className="mt-2 text-2xl font-black text-white">
-									Build the comic record
+									Editing: {matchedCover.title}
 								</h2>
 							</div>
 
@@ -92,7 +120,6 @@ export default function AdminComicCreatePage() {
 											}))
 										}
 										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-										placeholder="Enter comic title"
 									/>
 								</label>
 
@@ -109,7 +136,6 @@ export default function AdminComicCreatePage() {
 											}))
 										}
 										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-										placeholder="Optional alternative title"
 									/>
 								</label>
 
@@ -126,7 +152,6 @@ export default function AdminComicCreatePage() {
 											}))
 										}
 										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-										placeholder="debut-or-die"
 									/>
 								</label>
 
@@ -149,7 +174,7 @@ export default function AdminComicCreatePage() {
 
 									<label className="block">
 										<span className="mb-2 block text-sm font-medium text-white/75">
-											Type
+											Status
 										</span>
 										<select
 											value={formData.status}
@@ -161,7 +186,6 @@ export default function AdminComicCreatePage() {
 											}
 											className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
 										>
-											<option value="">Select status</option>
 											<option value="ONGOING">ONGOING</option>
 											<option value="COMPLETED">COMPLETED</option>
 											<option value="HIATUS">HIATUS</option>
@@ -180,12 +204,15 @@ export default function AdminComicCreatePage() {
 											onChange={(event) =>
 												setFormData((current) => ({
 													...current,
-													category: event.target.value,
+													category: event.target.value as
+														| "Manhwa"
+														| "Manga"
+														| "Manhua"
+														| "Webcomics",
 												}))
 											}
 											className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 										>
-											<option value="">Select category</option>
 											<option value="Manhwa">Manhwa</option>
 											<option value="Manga">Manga</option>
 											<option value="Manhua">Manhua</option>
@@ -207,7 +234,6 @@ export default function AdminComicCreatePage() {
 											}
 											className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 										>
-											<option value="">Select status</option>
 											<option value="ONGOING">ONGOING</option>
 											<option value="COMPLETED">COMPLETED</option>
 											<option value="HIATUS">HIATUS</option>
@@ -283,7 +309,7 @@ export default function AdminComicCreatePage() {
 										className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5"
 									>
 										<Plus className="h-4 w-4" />
-										Create comic
+										Save changes
 									</button>
 									<button
 										type="button"
@@ -293,7 +319,6 @@ export default function AdminComicCreatePage() {
 										Save draft
 									</button>
 								</div>
-
 							</form>
 						</aside>
 
@@ -314,37 +339,29 @@ export default function AdminComicCreatePage() {
 
 							<div className="mt-5 grid gap-5 md:grid-cols-[220px_1fr]">
 								<div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black shadow-[0_15px_40px_rgba(0,0,0,0.45)]">
-									{formData.coverPhoto ? (
-										<div className="relative aspect-[3/4]">
-											<Image
-												src={formData.coverPhoto}
-												alt={formData.title || "Comic cover preview"}
-												fill
-												className="object-cover"
-												sizes="220px"
-											/>
-										</div>
-									) : (
-										<div className="flex aspect-[3/4] items-center justify-center bg-[linear-gradient(180deg,rgba(17,1,46,0.9)_0%,rgba(0,0,0,0.95)_100%)] px-6 text-center">
-											<p className="text-sm font-medium text-white/45">
-												No cover selected yet
-											</p>
-										</div>
-									)}
+									<div className="relative aspect-[3/4]">
+										<Image
+											src={formData.coverPhoto}
+											alt={formData.title}
+											fill
+											className="object-cover"
+											sizes="220px"
+										/>
+									</div>
 								</div>
 
 								<div>
 									<p className="text-xs font-medium tracking-wide text-white/40">
-										{formData.title || "New comic"} / Alternative Titles
+										{formData.title} / Alternative Titles
 									</p>
 									<h3 className="mt-1 text-2xl font-black tracking-tight text-white">
-										{formData.title || "Untitled comic"}
+										{formData.title}
 									</h3>
 									<p className="mt-2 text-sm text-white/55">
-										Alternative title: {formData.alternativeName || "Not set yet"}
+										Alternative title: {formData.alternativeName}
 									</p>
 									<p className="mt-5 text-sm leading-7 text-white/68">
-										{formData.synopsis || "No synopsis written yet."}
+										{formData.synopsis}
 									</p>
 								</div>
 							</div>

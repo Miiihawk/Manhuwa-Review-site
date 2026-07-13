@@ -21,7 +21,7 @@ export default function Footer() {
           {/* Brand/Description Column */}
           <div className="space-y-4">
             <BrandLogo
-              href="/user/dashboard"
+              href="/dashboard"
               className="max-w-[14rem]"
               compact
             />

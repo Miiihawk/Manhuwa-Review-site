@@ -29,7 +29,7 @@ export default function ProfilePage() {
       <div className="relative mx-auto max-w-4xl px-6 pt-28 pb-10 sm:px-10 lg:px-12 z-10">
         {/* Navigation Back Link */}
         <Link
-          href="/user/dashboard"
+          href="/dashboard"
           className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-[#f6a1ff] mb-8 group"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
