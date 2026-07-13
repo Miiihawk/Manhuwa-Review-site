@@ -23,7 +23,7 @@ export class ReviewRepository {
     });
   }
 
-  averageRating(comicId: number) {
+  averageForComic(comicId: number) {
     return prisma.review.aggregate({
       where: { comicId },
       _avg: { rating: true },
