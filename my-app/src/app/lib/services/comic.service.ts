@@ -16,6 +16,14 @@ export class ComicService {
     return comicRepository.findAllSlugs();
   }
 
+  listRecentlyAdded() {
+    return comicRepository.findRecentlyAdded();
+  }
+
+  listHighestRated() {
+    return comicRepository.findHighestRated();
+  }
+
   async seedComics() {
     const existing = await comicRepository.count();
     if (existing > 0) {
