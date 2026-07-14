@@ -1369,6 +1369,7 @@ export type ComicCategoryScalarFieldEnum = (typeof ComicCategoryScalarFieldEnum)
 export const ComicScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  alternativeName: 'alternativeName',
   slug: 'slug',
   synopsis: 'synopsis',
   coverPhoto: 'coverPhoto',

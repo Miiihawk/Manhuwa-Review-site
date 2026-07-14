@@ -1,8 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { slugify, normalizeSlugInput } from "@/app/lib/slug";
 import {
   ArrowLeft,
@@ -14,24 +15,39 @@ import {
   User,
 } from "lucide-react";
 
-export default function AdminComicCreatePage() {
+interface EditComicFormProps {
+  comic: {
+    id: number;
+    title: string;
+    alternativeName: string;
+    slug: string;
+    author: string;
+    status: string;
+    category: string;
+    genres: string[];
+    coverPhoto: string;
+    synopsis: string;
+  };
+}
+
+export default function EditComicForm({ comic }: EditComicFormProps) {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
-    title: "",
-    alternativeName: "",
-    slug: "",
-    author: "",
-    status: "",
-    category: "",
-    genres: [] as string[],
-    coverPhoto: "",
-    synopsis: "",
+    title: comic.title,
+    alternativeName: comic.alternativeName,
+    slug: comic.slug,
+    author: comic.author,
+    status: comic.status,
+    category: comic.category,
+    genres: comic.genres,
+    coverPhoto: comic.coverPhoto,
+    synopsis: comic.synopsis,
   });
 
-  //All state
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
   const [genreChoices, setGenreChoices] = useState<string[]>([]);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [slugEdited, setSlugEdited] = useState(false);
 
   useEffect(() => {
@@ -50,12 +66,11 @@ export default function AdminComicCreatePage() {
 
   const toggleGenre = (genre: string) => {
     setFormData((current) => {
-      const hasGenre = current.genres.includes(genre);
-
+      const has = current.genres.includes(genre);
       return {
         ...current,
-        genres: hasGenre
-          ? current.genres.filter((entry) => entry !== genre)
+        genres: has
+          ? current.genres.filter((g) => g !== genre)
           : [...current.genres, genre],
       };
     });
@@ -66,13 +81,11 @@ export default function AdminComicCreatePage() {
     if (!file) return;
 
     setUploadingCover(true);
-
     try {
       const body = new FormData();
       body.append("file", file);
 
       const res = await fetch("/api/upload", { method: "POST", body });
-
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         alert(data.error || "Upload failed");
@@ -82,18 +95,18 @@ export default function AdminComicCreatePage() {
       const data = await res.json();
       setFormData((current) => ({ ...current, coverPhoto: data.url }));
     } catch (error) {
-      console.error(error);
+      console.error("Cover upload failed:", error);
       alert("Upload failed — check your connection.");
     } finally {
       setUploadingCover(false);
     }
   }
 
-  async function handleCreate() {
-    setSubmitting(true);
+  async function handleSave() {
+    setSaving(true);
     try {
-      const res = await fetch("/api/comics", {
-        method: "POST",
+      const res = await fetch(`/api/comics/${comic.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: formData.title,
@@ -102,27 +115,30 @@ export default function AdminComicCreatePage() {
           synopsis: formData.synopsis,
           coverPhoto: formData.coverPhoto,
           author: formData.author,
-          genres: formData.genres,
           category: formData.category,
           publicationStatus: formData.status,
+          genres: formData.genres,
         }),
       });
 
       const data = await res.json().catch(() => ({}));
-
       if (!res.ok) {
-        alert(data.error || "Could not create comic. Check the fields.");
+        alert(data.error || "Could not save changes.");
         return;
       }
 
-      router.push(`/admin/comics`); // go to the new comic's page
+      router.push("/admin/comics");
+      router.refresh();
     } catch (error) {
-      console.error("Create comic failed:", error);
-      alert("Could not create comic — check your connection.");
+      console.error("Save comic failed:", error);
+      alert("Could not save — check your connection.");
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   }
+
+  const inputClass =
+    "w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25";
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -145,10 +161,10 @@ export default function AdminComicCreatePage() {
             <aside className="rounded-[1.75rem] border border-[#f6a1ff]/15 bg-[linear-gradient(180deg,rgba(17,1,46,0.92)_0%,rgba(0,0,0,0.82)_100%)] p-5 sm:p-6">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#fff7e0]">
-                  Create Form
+                  Edit Comic
                 </p>
                 <h2 className="mt-2 text-2xl font-black text-white">
-                  Build the comic record
+                  Edit the comic record
                 </h2>
               </div>
 
@@ -159,12 +175,12 @@ export default function AdminComicCreatePage() {
                   </span>
                   <input
                     value={formData.title}
-                    onChange={(event) => {
-                      const title = event.target.value;
-                      setFormData((current) => ({
-                        ...current,
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      setFormData((c) => ({
+                        ...c,
                         title,
-                        slug: slugEdited ? current.slug : slugify(title),
+                        slug: slugEdited ? c.slug : slugify(title),
                       }));
                     }}
                     className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
@@ -178,10 +194,10 @@ export default function AdminComicCreatePage() {
                   </span>
                   <input
                     value={formData.alternativeName}
-                    onChange={(event) =>
-                      setFormData((current) => ({
-                        ...current,
-                        alternativeName: event.target.value,
+                    onChange={(e) =>
+                      setFormData((c) => ({
+                        ...c,
+                        alternativeName: e.target.value,
                       }))
                     }
                     className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
@@ -195,11 +211,11 @@ export default function AdminComicCreatePage() {
                   </span>
                   <input
                     value={formData.slug}
-                    onChange={(event) => {
+                    onChange={(e) => {
                       setSlugEdited(true);
-                      setFormData((current) => ({
-                        ...current,
-                        slug: normalizeSlugInput(event.target.value),
+                      setFormData((c) => ({
+                        ...c,
+                        slug: normalizeSlugInput(e.target.value),
                       }));
                     }}
                     className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
@@ -213,11 +229,8 @@ export default function AdminComicCreatePage() {
                   </span>
                   <input
                     value={formData.author}
-                    onChange={(event) =>
-                      setFormData((current) => ({
-                        ...current,
-                        author: event.target.value,
-                      }))
+                    onChange={(e) =>
+                      setFormData((c) => ({ ...c, author: e.target.value }))
                     }
                     className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
                     placeholder="Enter author name"
@@ -231,11 +244,8 @@ export default function AdminComicCreatePage() {
                     </span>
                     <select
                       value={formData.category}
-                      onChange={(event) =>
-                        setFormData((current) => ({
-                          ...current,
-                          category: event.target.value,
-                        }))
+                      onChange={(e) =>
+                        setFormData((c) => ({ ...c, category: e.target.value }))
                       }
                       className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
                     >
@@ -253,11 +263,8 @@ export default function AdminComicCreatePage() {
                     </span>
                     <select
                       value={formData.status}
-                      onChange={(event) =>
-                        setFormData((current) => ({
-                          ...current,
-                          status: event.target.value,
-                        }))
+                      onChange={(e) =>
+                        setFormData((c) => ({ ...c, status: e.target.value }))
                       }
                       className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
                     >
@@ -278,7 +285,6 @@ export default function AdminComicCreatePage() {
                     {genreChoices.length > 0 ? (
                       genreChoices.map((genre) => {
                         const active = formData.genres.includes(genre);
-
                         return (
                           <button
                             key={genre}
@@ -308,11 +314,8 @@ export default function AdminComicCreatePage() {
                   </span>
                   <textarea
                     value={formData.synopsis}
-                    onChange={(event) =>
-                      setFormData((current) => ({
-                        ...current,
-                        synopsis: event.target.value,
-                      }))
+                    onChange={(e) =>
+                      setFormData((c) => ({ ...c, synopsis: e.target.value }))
                     }
                     rows={6}
                     className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
@@ -353,12 +356,11 @@ export default function AdminComicCreatePage() {
                 <div className="grid gap-3 pt-2 sm:grid-cols-2">
                   <button
                     type="button"
-                    onClick={handleCreate}
-                    disabled={submitting}
+                    onClick={handleSave}
+                    disabled={saving}
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60"
                   >
-                    <Plus className="h-4 w-4" />
-                    {submitting ? "Creating…" : "Create comic"}
+                    {saving ? "Saving…" : "Edit comic"}
                   </button>
                   <button
                     type="button"
@@ -392,10 +394,10 @@ export default function AdminComicCreatePage() {
                     <div className="relative aspect-[3/4]">
                       <Image
                         src={formData.coverPhoto}
-                        alt={formData.title || "Comic cover preview"}
+                        alt={formData.title}
                         fill
                         className="object-cover"
-                        sizes="220px"
+                        sizes="144px"
                       />
                     </div>
                   ) : (

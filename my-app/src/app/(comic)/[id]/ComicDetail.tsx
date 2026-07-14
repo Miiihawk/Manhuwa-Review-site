@@ -14,7 +14,12 @@ interface ComicDetailProps {
     alternativeName?: string | null;
     coverPhoto: string;
     synopsis: string;
-    _count: { reviews: number };
+    author: string;
+    averageRating: number | null;
+    publicationStatus: string;
+    category: { name: string } | null;
+    genres: { genre: { name: string } }[];
+    _count: { reviews: number; favorites: number };
   };
   slug: string;
 }
@@ -27,6 +32,17 @@ export default function ComicDetail({ comic, slug }: ComicDetailProps) {
     title: comic.title,
     image: comic.coverPhoto,
     description: comic.synopsis,
+  };
+
+  const sidebarComic = {
+    title: comic.title,
+    image: comic.coverPhoto,
+    author: comic.author,
+    averageRating: comic.averageRating,
+    status: comic.publicationStatus,
+    category: comic.category?.name ?? null,
+    genres: comic.genres.map((g) => g.genre.name),
+    favoritesCount: comic._count.favorites,
   };
 
   const totalReviews = String(comic._count.reviews);
@@ -50,7 +66,7 @@ export default function ComicDetail({ comic, slug }: ComicDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start mt-4">
           {/* LEFT SIDEBAR COLUMN */}
           <ComicSidebar
-            comic={uiComic}
+            comic={sidebarComic}
             slug={slug}
             setActiveSubTab={setActiveSubTab}
             setIsReviewModalOpen={setIsReviewModalOpen}
