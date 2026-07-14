@@ -64,6 +64,7 @@ export default function AdminComicEditPage() {
 		coverPhoto: matchedCover.image,
 		synopsis: matchedCover.description,
 	});
+	const [uploadingCover, setUploadingCover] = useState(false);
 
 	const toggleGenre = (genre: string) => {
 		setFormData((current) => {
@@ -77,6 +78,34 @@ export default function AdminComicEditPage() {
 			};
 		});
 	};
+
+	async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>) {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		setUploadingCover(true);
+
+		try {
+			const body = new FormData();
+			body.append("file", file);
+
+			const res = await fetch("/api/upload", { method: "POST", body });
+
+			if (!res.ok) {
+				const data = await res.json().catch(() => ({}));
+				alert(data.error || "Upload failed");
+				return;
+			}
+
+			const data = await res.json();
+			setFormData((current) => ({ ...current, coverPhoto: data.url }));
+		} catch (error) {
+			console.error(error);
+			alert("Upload failed — check your connection.");
+		} finally {
+			setUploadingCover(false);
+		}
+	}
 
 	return (
 		<main className="relative min-h-screen overflow-hidden bg-black text-white">
@@ -155,44 +184,22 @@ export default function AdminComicEditPage() {
 									/>
 								</label>
 
-								<div className="grid gap-4 sm:grid-cols-2">
-									<label className="block">
-										<span className="mb-2 block text-sm font-medium text-white/75">
-											Author
-										</span>
-										<input
-											value={formData.author}
-											onChange={(event) =>
-												setFormData((current) => ({
-													...current,
-													author: event.target.value,
-												}))
-											}
-											className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
-										/>
-									</label>
-
-									<label className="block">
-										<span className="mb-2 block text-sm font-medium text-white/75">
-											Status
-										</span>
-										<select
-											value={formData.status}
-											onChange={(event) =>
-												setFormData((current) => ({
-													...current,
-													status: event.target.value,
-												}))
-											}
-											className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
-										>
-											<option value="ONGOING">ONGOING</option>
-											<option value="COMPLETED">COMPLETED</option>
-											<option value="HIATUS">HIATUS</option>
-											<option value="COMING_SOON">COMING_SOON</option>
-										</select>
-									</label>
-								</div>
+								<label className="block">
+									<span className="mb-2 block text-sm font-medium text-white/75">
+										Author
+									</span>
+									<input
+										value={formData.author}
+										onChange={(event) =>
+											setFormData((current) => ({
+												...current,
+												author: event.target.value,
+											}))
+										}
+										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
+										placeholder="Enter author name"
+									/>
+								</label>
 
 								<div className="grid gap-4 sm:grid-cols-2">
 									<label className="block">
@@ -284,6 +291,23 @@ export default function AdminComicEditPage() {
 										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
 										placeholder="Write the comic description..."
 									/>
+								</label>
+
+								<label className="block">
+									<span className="mb-2 block text-sm font-medium text-white/75">
+										Reupload cover photo
+									</span>
+
+									<input
+										type="file"
+										accept="image/*"
+										onChange={handleCoverUpload}
+										disabled={uploadingCover}
+										className="block w-full text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-[#ff018f] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:brightness-110"
+									/>
+									{uploadingCover && (
+										<p className="mt-2 text-sm text-white/50">Uploading…</p>
+									)}
 								</label>
 
 								<label className="block">

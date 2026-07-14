@@ -15,6 +15,10 @@ const initialGenres = [
 export default function AdminGenresPage() {
 	const [genres, setGenres] = useState(initialGenres);
 	const [editingGenre, setEditingGenre] = useState<(typeof initialGenres)[number] | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const filteredGenres = genres.filter((genre) =>
+		genre.name.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
 
 	function handleSaveGenre() {
 		if (!editingGenre) return;
@@ -68,10 +72,19 @@ export default function AdminGenresPage() {
 								<div>
 									<h2 className="text-2xl font-black text-white">All genres</h2>
 								</div>
+								<div className="w-full max-w-sm">
+									<input
+										type="search"
+										value={searchQuery}
+										onChange={(event) => setSearchQuery(event.target.value)}
+										placeholder="Search genres"
+										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+									/>
+								</div>
 							</div>
 
 							<div className="divide-y divide-white/10">
-								{genres.map((genre) => (
+								{filteredGenres.map((genre) => (
 									<article
 										key={genre.id}
 										className="flex flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between"

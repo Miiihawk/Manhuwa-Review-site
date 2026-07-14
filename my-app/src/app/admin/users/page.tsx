@@ -5,13 +5,23 @@ import { userService } from "@/app/lib/services/user.service";
 // SSR: re-render on every request so the admin always sees live data.
 export const dynamic = "force-dynamic";
 
-const roleOptions = ["ADMIN", "MODERATOR", "USER"];
+const roleOptions = ["ADMIN", "USER"];
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string }>;
+}) {
   const users = await userService.listUsers();
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const query = resolvedSearchParams.q?.trim().toLowerCase() ?? "";
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query),
+  );
 
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
-  const moderatorCount = users.filter((u) => u.role === "MODERATOR").length;
   const memberCount = users.filter((u) => u.role === "USER").length;
 
   return (
@@ -42,28 +52,18 @@ export default async function AdminUsersPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <div className="rounded-2xl border border-[#ff018f]/25 bg-[#ff018f]/10 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f6a1ff]">
                 Total Users
               </p>
-              <p className="mt-1 text-lg font-black text-white">
-                {users.length}
-              </p>
+              <p className="mt-1 text-lg font-black text-white">{users.length}</p>
             </div>
             <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
                 Admins
               </p>
               <p className="mt-1 text-lg font-black text-white">{adminCount}</p>
-            </div>
-            <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
-                Moderators
-              </p>
-              <p className="mt-1 text-lg font-black text-white">
-                {moderatorCount}
-              </p>
             </div>
             <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
@@ -82,13 +82,19 @@ export default async function AdminUsersPage() {
                   Current user list
                 </h2>
               </div>
-              <span className="rounded-full border border-[#d9ccff]/20 bg-[#d9ccff]/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.3em] text-[#d9ccff]">
-                {users.length} accounts
-              </span>
+              <form action="" className="w-full max-w-sm">
+                <input
+                  type="search"
+                  name="q"
+                  defaultValue={resolvedSearchParams.q ?? ""}
+                  placeholder="Search username or gmail"
+                  className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+                />
+              </form>
             </div>
 
             <div className="divide-y divide-white/10">
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <article
                   key={user.id}
                   className="grid gap-4 px-5 py-5 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center"
@@ -134,6 +140,12 @@ export default async function AdminUsersPage() {
                     >
                       <Ban className="h-4 w-4" />
                       Deactivate
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
+                    >
+                      Save
                     </button>
                     <button
                       type="button"

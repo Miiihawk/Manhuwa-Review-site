@@ -14,6 +14,10 @@ const initialCategories = [
 export default function AdminCategoriesPage() {
 	const [categories, setCategories] = useState(initialCategories);
 	const [editingCategory, setEditingCategory] = useState<(typeof initialCategories)[number] | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const filteredCategories = categories.filter((category) =>
+		category.name.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
 
 	function handleSaveCategory() {
 		if (!editingCategory) return;
@@ -67,10 +71,19 @@ export default function AdminCategoriesPage() {
 								<div>
 									<h2 className="text-2xl font-black text-white">All categories</h2>
 								</div>
+								<div className="w-full max-w-sm">
+									<input
+										type="search"
+										value={searchQuery}
+										onChange={(event) => setSearchQuery(event.target.value)}
+										placeholder="Search categories"
+										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+									/>
+								</div>
 							</div>
 
 							<div className="divide-y divide-white/10">
-								{categories.map((category) => (
+								{filteredCategories.map((category) => (
 									<article
 										key={category.id}
 										className="flex flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
