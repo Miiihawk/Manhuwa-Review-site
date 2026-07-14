@@ -198,45 +198,22 @@ export default function AdminComicCreatePage() {
                   />
                 </label>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-white/75">
-                      Author
-                    </span>
-                    <input
-                      value={formData.author}
-                      onChange={(event) =>
-                        setFormData((current) => ({
-                          ...current,
-                          author: event.target.value,
-                        }))
-                      }
-                      className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
-                    />
-                  </label>
-
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-white/75">
-                      Type
-                    </span>
-                    <select
-                      value={formData.status}
-                      onChange={(event) =>
-                        setFormData((current) => ({
-                          ...current,
-                          status: event.target.value,
-                        }))
-                      }
-                      className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
-                    >
-                      <option value="">Select status</option>
-                      <option value="ONGOING">ONGOING</option>
-                      <option value="COMPLETED">COMPLETED</option>
-                      <option value="HIATUS">HIATUS</option>
-                      <option value="COMING_SOON">COMING_SOON</option>
-                    </select>
-                  </label>
-                </div>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-white/75">
+                    Author
+                  </span>
+                  <input
+                    value={formData.author}
+                    onChange={(event) =>
+                      setFormData((current) => ({
+                        ...current,
+                        author: event.target.value,
+                      }))
+                    }
+                    className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#ff018f] focus:ring-2 focus:ring-[#ff018f]/25"
+                    placeholder="Enter author name"
+                  />
+                </label>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block">
