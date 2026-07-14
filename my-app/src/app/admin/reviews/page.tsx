@@ -46,9 +46,9 @@ export default function AdminReviewsPage() {
 				<div className="mb-6 flex items-center justify-between gap-4">
 					<Link
 						href="/admin/dashboard"
-						className="inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
+						className="group inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
 					>
-						<ArrowLeft className="h-4 w-4" />
+						<ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
 						Back to dashboard
 					</Link>
 				</div>
@@ -113,11 +113,19 @@ export default function AdminReviewsPage() {
 											<span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#d9ccff]">
 												{review.rating} stars
 											</span>
-											<span className="text-xs font-medium text-white/45">{review.comic}</span>
+											<span className="text-xs font-medium text-white/45">
+												Title: {review.comic}
+											</span>
 										</div>
 
 										<div>
-											<h3 className="text-2xl font-black text-white">{review.user}</h3>
+											<p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#f6a1ff]">
+												User:
+											</p>
+											<h3 className="mt-1 text-2xl font-black text-white">{review.user}</h3>
+											<p className="mt-3 text-[10px] font-bold uppercase tracking-[0.3em] text-[#f6a1ff]">
+												Review:
+											</p>
 											<p className="mt-1 text-sm text-white/66">{review.comment}</p>
 										</div>
 									</div>
