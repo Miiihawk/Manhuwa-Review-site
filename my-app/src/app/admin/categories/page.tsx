@@ -18,9 +18,9 @@ export default function AdminCategoriesPage() {
 				<div className="mb-6 flex items-center justify-between gap-4">
 					<Link
 						href="/admin/dashboard"
-						className="inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
+						className="group inline-flex items-center gap-2 text-sm font-semibold text-white/65 transition-colors hover:text-[#f6a1ff]"
 					>
-						<ArrowLeft className="h-4 w-4" />
+						<ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
 						Back to dashboard
 					</Link>
 				</div>
@@ -98,9 +98,9 @@ export default function AdminCategoriesPage() {
 									placeholder="Category name"
 									className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 								/>
-								<textarea
-									rows={4}
-									placeholder="Category description"
+								<input
+									type="text"
+									placeholder="Category slug/route key (ex: life-of-a-sage)"
 									className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 								/>
 								<button
