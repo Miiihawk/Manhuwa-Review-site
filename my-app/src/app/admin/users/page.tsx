@@ -113,11 +113,10 @@ export default async function AdminUsersPage() {
 
                   <div className="flex flex-wrap gap-2 lg:justify-end">
                     <div className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10">
-                      <Shield className="h-4 w-4" />
+                      <Shield className="h-4 w-4"/>
                       <select
                         defaultValue={user.role}
-                        className="bg-transparent text-sm font-semibold text-white outline-none"
-                      >
+                        className="bg-transparent text-sm font-semibold text-white outline-none">
                         {roleOptions.map((role) => (
                           <option
                             key={role}

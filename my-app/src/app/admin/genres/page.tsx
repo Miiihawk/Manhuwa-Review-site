@@ -1,15 +1,32 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Edit3, Plus, Trash2 } from "lucide-react";
 
-const genres = [
-	{ id: 1, name: "Action", count: 38 },
-	{ id: 2, name: "Fantasy", count: 24 },
-	{ id: 3, name: "Drama", count: 16 },
-	{ id: 4, name: "Romance", count: 12 },
-	{ id: 5, name: "Mystery", count: 9 },
+const initialGenres = [
+	{ id: 1, name: "Action", slug: "action", count: 38 },
+	{ id: 2, name: "Fantasy", slug: "fantasy", count: 24 },
+	{ id: 3, name: "Drama", slug: "drama", count: 16 },
+	{ id: 4, name: "Romance", slug: "romance", count: 12 },
+	{ id: 5, name: "Mystery", slug: "mystery", count: 9 },
 ];
 
 export default function AdminGenresPage() {
+	const [genres, setGenres] = useState(initialGenres);
+	const [editingGenre, setEditingGenre] = useState<(typeof initialGenres)[number] | null>(null);
+
+	function handleSaveGenre() {
+		if (!editingGenre) return;
+
+		setGenres((current) =>
+			current.map((genre) =>
+				genre.id === editingGenre.id ? editingGenre : genre,
+			),
+		);
+		setEditingGenre(null);
+	}
+
 	return (
 		<main className="relative min-h-screen overflow-hidden bg-black text-white">
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,1,143,0.16),transparent_24%),radial-gradient(circle_at_75%_20%,rgba(45,12,98,0.35),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(246,161,255,0.12),transparent_26%)]" />
@@ -64,12 +81,16 @@ export default function AdminGenresPage() {
 												Genre
 											</p>
 											<h3 className="mt-2 text-2xl font-black text-white">{genre.name}</h3>
+											<p className="mt-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/35">
+												Route key: {genre.slug}
+											</p>
 											<p className="mt-1 text-sm text-white/55">Used in {genre.count} comics</p>
 										</div>
 
 										<div className="flex flex-wrap gap-2 lg:justify-end">
 											<button
 												type="button"
+												onClick={() => setEditingGenre(genre)}
 												className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
 											>
 												<Edit3 className="h-4 w-4" />
@@ -115,6 +136,66 @@ export default function AdminGenresPage() {
 						</div>
 					</div>
 				</section>
+
+				{editingGenre && (
+					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-6">
+						<div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#120529]/95 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
+							<div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+								<div>
+									<p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f6a1ff]">
+										Edit genre
+									</p>
+									<h2 className="mt-2 text-2xl font-black text-white">
+										{editingGenre.name}
+									</h2>
+								</div>
+								<button
+									type="button"
+									onClick={() => setEditingGenre(null)}
+									className="text-sm font-semibold text-white/55 transition-colors hover:text-white"
+								>
+									Close
+								</button>
+							</div>
+
+							<div className="mt-5 space-y-4">
+								<label className="block">
+									<span className="mb-2 block text-sm font-medium text-white/75">Genre name</span>
+									<input
+										value={editingGenre.name}
+										onChange={(event) =>
+											setEditingGenre((current) =>
+												current ? { ...current, name: event.target.value } : current,
+											)
+										}
+										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+									/>
+								</label>
+
+								<label className="block">
+									<span className="mb-2 block text-sm font-medium text-white/75">Slug / route key</span>
+									<input
+										value={editingGenre.slug}
+										onChange={(event) =>
+											setEditingGenre((current) =>
+												current ? { ...current, slug: event.target.value } : current,
+											)
+										}
+										className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+									/>
+								</label>
+
+								<button
+									type="button"
+									onClick={handleSaveGenre}
+									className="inline-flex h-12 items-center justify-center rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5"
+								>
+									Save
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		</main>
 	);
