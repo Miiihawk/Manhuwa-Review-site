@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Ban, Eye, Shield, Trash2, Users } from "lucide-react";
+import { ArrowLeft, Ban, Shield, Trash2 } from "lucide-react";
 
 const users = [
 	{
@@ -14,7 +14,7 @@ const users = [
 		id: 2,
 		name: "Mika Sol",
 		email: "mika@example.com",
-		role: "Moderator",
+		role: "User",
 		status: "Active",
 		joined: "1 week ago",
 	},
@@ -36,7 +36,7 @@ const users = [
 	},
 ];
 
-const roleOptions = ["Admin", "Moderator", "User"];
+const roleOptions = ["Admin", "User"];
 
 export default function AdminUsersPage() {
 	return (
@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
 						</div>
 					</div>
 
-					<div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+					<div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
 						<div className="rounded-2xl border border-[#ff018f]/25 bg-[#ff018f]/10 px-4 py-3">
 							<p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f6a1ff]">
 								Total Users
@@ -77,12 +77,6 @@ export default function AdminUsersPage() {
 						<div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
 							<p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
 								Admins
-							</p>
-							<p className="mt-1 text-lg font-black text-white">1</p>
-						</div>
-						<div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
-							<p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
-								Moderators
 							</p>
 							<p className="mt-1 text-lg font-black text-white">1</p>
 						</div>
@@ -147,6 +141,12 @@ export default function AdminUsersPage() {
 										>
 											<Ban className="h-4 w-4" />
 											Deactivate
+										</button>
+										<button
+											type="button"
+											className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
+										>
+											Save
 										</button>
 										<button
 											type="button"

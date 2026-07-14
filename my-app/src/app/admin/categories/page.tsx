@@ -98,9 +98,9 @@ export default function AdminCategoriesPage() {
 									placeholder="Category name"
 									className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 								/>
-								<textarea
-									rows={4}
-									placeholder="Category description"
+								<input
+									type="text"
+									placeholder="Category slug/route key (ex: life-of-a-sage)"
 									className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
 								/>
 								<button
