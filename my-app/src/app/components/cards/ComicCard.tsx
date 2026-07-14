@@ -26,7 +26,7 @@ export default function ComicCard({ comic }: ComicCardProps) {
 
   return (
     <Link
-      href={`/comic/${comicId}`}
+      href={`/${comicId}`}
       className="group block w-full overflow-hidden rounded-2xl bg-white/5 border border-white/5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(242,112,156,0.15)] hover:border-pink-500/20"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden">

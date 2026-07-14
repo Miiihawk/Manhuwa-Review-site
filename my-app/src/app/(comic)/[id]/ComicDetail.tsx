@@ -2,35 +2,33 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import Navbar from "../../components/layout/Navbar";
 import ComicSidebar from "./components/ComicSidebar";
 import ComicTabs from "./components/ComicTabs";
 import TabsContent from "./components/TabsContent";
+import type { TabType } from "./page";
 
-import { featuredCovers } from "../../data/comic";
+interface ComicDetailProps {
+  comic: {
+    title: string;
+    coverPhoto: string;
+    synopsis: string;
+    _count: { reviews: number };
+  };
+  slug: string;
+}
 
-export type TabType = "synopsis" | "reviews" | "sources";
-
-export default function StaticComicDetailsPage() {
-  const params = useParams<{ id?: string }>();
-  const comicId = typeof params.id === "string" ? params.id : "";
-  const comic = featuredCovers.find((entry) => entry.id === comicId);
+export default function ComicDetail({ comic, slug }: ComicDetailProps) {
   const [activeSubTab, setActiveSubTab] = useState<TabType>("reviews");
-  // Shared state controlling the popup visibility globally
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
-  if (!comic) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-sm text-white/45">
-          No matching webcomic records found.
-        </p>
-      </div>
-    );
-  }
+  const uiComic = {
+    title: comic.title,
+    image: comic.coverPhoto,
+    description: comic.synopsis,
+  };
 
-  const totalReviews = "6";
+  const totalReviews = String(comic._count.reviews);
 
   return (
     <main className="relative min-h-screen bg-[#0b021a] text-white font-sans antialiased overflow-x-hidden">
@@ -38,7 +36,7 @@ export default function StaticComicDetailsPage() {
 
       <div className="absolute top-0 left-0 right-0 h-[60vh] opacity-[0.06] blur-xl pointer-events-none select-none z-0">
         <Image
-          src={comic.image}
+          src={uiComic.image}
           alt=""
           fill
           className="object-cover scale-110"
@@ -51,7 +49,8 @@ export default function StaticComicDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start mt-4">
           {/* LEFT SIDEBAR COLUMN */}
           <ComicSidebar
-            comic={comic}
+            comic={uiComic}
+            slug={slug}
             setActiveSubTab={setActiveSubTab}
             setIsReviewModalOpen={setIsReviewModalOpen}
           />
@@ -59,10 +58,10 @@ export default function StaticComicDetailsPage() {
           {/* RIGHT MAIN PANEL COLUMN */}
           <div className="flex flex-col">
             <p className="text-xs text-white/40 font-medium tracking-wide">
-              {comic.title} / Alternative Titles
+              {uiComic.title} /
             </p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
-              {comic.title}
+              {uiComic.title}
             </h1>
 
             <ComicTabs
@@ -73,7 +72,8 @@ export default function StaticComicDetailsPage() {
 
             <TabsContent
               activeSubTab={activeSubTab}
-              comic={comic}
+              comic={uiComic}
+              slug={slug}
               isReviewModalOpen={isReviewModalOpen}
               setIsReviewModalOpen={setIsReviewModalOpen}
             />

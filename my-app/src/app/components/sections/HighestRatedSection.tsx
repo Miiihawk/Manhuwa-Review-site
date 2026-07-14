@@ -1,12 +1,25 @@
-// src/app/components/sections/HighestRatedSection.tsx
 import ComicCard from "../cards/ComicCard";
-// Import your local data array
-import { featuredCovers } from "../../data/comic";
+import { comicService } from "@/app/lib/services/comic.service";
 
-export default function HighestRatedSection() {
-  // Optional: If your mock data has ratings later, you could sort it here.
-  // For now, we'll map your existing items straight through!
+export default async function HighestRatedSection() {
+  let comics: {
+    id: string;
+    title: string;
+    image: string;
+    tag: string;
+  }[] = [];
 
+  try {
+    const rows = await comicService.listHighestRated();
+    comics = rows.map((comic) => ({
+      id: comic.slug,
+      title: comic.title,
+      image: comic.coverPhoto,
+      tag: comic.publicationStatus,
+    }));
+  } catch (error) {
+    console.error("Error fetching featured covers:", error);
+  }
   return (
     <section className="w-full">
       {/* Visual Header Alignment */}
@@ -21,7 +34,7 @@ export default function HighestRatedSection() {
 
       {/* Grid Layout Track matching your responsive break-points */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        {featuredCovers.map((comic, index) => (
+        {comics.map((comic, index) => (
           <ComicCard key={`${comic.title}-${index}`} comic={comic} />
         ))}
       </div>

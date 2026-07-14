@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Star, Bookmark, Heart, Edit3, Info, Tag, User } from "lucide-react";
 import { TabType } from "../page";
+import { useState, useEffect } from "react";
 
 interface ComicSidebarProps {
   comic: {
@@ -10,15 +11,65 @@ interface ComicSidebarProps {
     image: string;
     type?: string;
   };
+  slug: string;
   setActiveSubTab: (tab: TabType) => void;
   setIsReviewModalOpen: (open: boolean) => void;
 }
 
 export default function ComicSidebar({
   comic,
+  slug,
   setActiveSubTab,
   setIsReviewModalOpen,
 }: ComicSidebarProps) {
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    async function loadStatus() {
+      try {
+        const res = await fetch(`/api/favorites?slug=${slug}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (active) setIsFavorited(data.favorited);
+      } catch (error) {
+        console.error("Failed to load favorite status:", error);
+      }
+    }
+    loadStatus();
+    return () => {
+      active = false;
+    };
+  }, [slug]);
+
+  async function toggleFavorite() {
+    setFavLoading(true);
+    try {
+      const res = await fetch("/api/favorites", {
+        method: isFavorited ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug }),
+      });
+
+      if (res.status === 401) {
+        alert("Please log in to favorite comics.");
+        return;
+      }
+      if (!res.ok) {
+        alert("Could not update favorite.");
+        return;
+      }
+
+      setIsFavorited((prev) => !prev);
+    } catch (error) {
+      console.error("Toggle favorite failed:", error);
+      alert("Could not update favorite — check your connection.");
+    } finally {
+      setFavLoading(false);
+    }
+  }
+
   const author = "Fanmison / Luminara";
   const category = comic.type || "Manhwa";
   const genres = ["Action", "Fantasy", "Drama", "Shonen"];
@@ -63,10 +114,16 @@ export default function ComicSidebar({
 
         {/* Add to Favorites Icon Button */}
         <button
-          className="flex h-11 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition active:scale-95 text-[#ff018f] select-none"
-          title="Add to Favorites"
+          onClick={toggleFavorite}
+          disabled={favLoading}
+          className={`flex h-11 items-center justify-center rounded-lg border transition active:scale-95 text-[#ff018f] select-none ${
+            isFavorited
+              ? "bg-[#ff018f]/20 border-[#ff018f]/40"
+              : "bg-white/5 hover:bg-white/10 border-white/10"
+          }`}
+          title={isFavorited ? "Remove from Favorites" : "Add to Favorites"}
         >
-          <Heart className="h-4 w-4 fill-current" />
+          <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
         </button>
       </div>
 

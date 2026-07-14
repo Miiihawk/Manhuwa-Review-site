@@ -12,7 +12,7 @@ export default function LogoutPage() {
           This is the logout page placeholder for now.
         </p>
         <Link
-          href="/auth/login"
+          href="/login"
           className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black"
         >
           Log back in
