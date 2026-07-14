@@ -11,6 +11,7 @@ export class ComicRepository {
   findBySlug(slug: string) {
     return prisma.comic.findUnique({
       where: { slug },
+      include: { _count: { select: { reviews: true } } },
     });
   }
 

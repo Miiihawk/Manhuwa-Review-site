@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Star, MessageSquare, ExternalLink, User } from "lucide-react";
 import { TabType } from "../page";
 import ReviewFormModal from "./ReviewFormModal";
@@ -11,6 +11,7 @@ interface TabsContentProps {
     title: string;
     description?: string;
   };
+  slug: string;
   isReviewModalOpen: boolean;
   setIsReviewModalOpen: (open: boolean) => void;
 }
@@ -26,25 +27,43 @@ interface Review {
 export default function TabsContent({
   activeSubTab,
   comic,
+  slug,
   isReviewModalOpen,
   setIsReviewModalOpen,
 }: TabsContentProps) {
-  const [communityReviews, setCommunityReviews] = useState<Review[]>([
-    {
-      id: "1",
-      user: "SoloReader99",
-      rating: 10,
-      date: "2 days ago",
-      text: "Absolutely phenomenal artwork and pacing! The main character transitions perfectly into his modern setting. Highly recommended if you enjoy high-stakes progression systems.",
-    },
-    {
-      id: "2",
-      user: "ManhwaEnjoyer",
-      rating: 8,
-      date: "1 week ago",
-      text: "The comedy hits just right and the subversion of classic tropes keeps it extremely fresh. Deducted two points only because the latest arc started a bit slow.",
-    },
-  ]);
+  const [communityReviews, setCommunityReviews] = useState<Review[]>([]);
+
+  const loadReviews = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/reviews?slug=${slug}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setCommunityReviews(
+        data.map(
+          (r: {
+            id: number;
+            rating: number;
+            review: string | null;
+            createdAt: string;
+            user: { username: string };
+          }) => ({
+            id: String(r.id),
+            user: r.user?.username ?? "Unknown",
+            rating: r.rating * 2,
+            date: new Date(r.createdAt).toLocaleDateString(),
+            text: r.review ?? "",
+          }),
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to load reviews:", error);
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
 
   const officialSources = [
     {
@@ -64,15 +83,32 @@ export default function TabsContent({
     },
   ];
 
-  const handleAddReview = (newReview: { text: string; rating: number }) => {
-    const formattedReview: Review = {
-      id: Date.now().toString(),
-      user: "Anonymous Reader",
-      rating: newReview.rating * 2,
-      date: "Just now",
-      text: newReview.text,
-    };
-    setCommunityReviews([formattedReview, ...communityReviews]);
+  const handleAddReview = async (newReview: {
+    text: string;
+    rating: number;
+  }) => {
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug,
+          rating: newReview.rating,
+          review: newReview.text,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Could not save review. Are you logged in?");
+        return;
+      }
+
+      await loadReviews(); // pull the fresh list from the DB
+    } catch (error) {
+      console.error("Review submit failed:", error);
+      alert("Could not save review — check your connection.");
+    }
   };
 
   return (
