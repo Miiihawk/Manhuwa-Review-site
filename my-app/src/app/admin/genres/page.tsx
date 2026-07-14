@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Edit3, Trash2 } from "lucide-react";
 import { genreService } from "@/app/lib/services/genre.service";
 import AddGenreForm from "./AddGenreForm";
+import GenreRow from "./GenreRow";
 
 export const dynamic = "force-dynamic";
 
@@ -67,39 +68,7 @@ export default async function AdminGenresPage() {
               {genres.length > 0 ? (
                 <div className="divide-y divide-white/10">
                   {genres.map((genre) => (
-                    <article
-                      key={genre.id}
-                      className="flex flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
-                    >
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f6a1ff]">
-                          Genre
-                        </p>
-                        <h3 className="mt-2 text-2xl font-black text-white">
-                          {genre.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-white/55">
-                          Used in {genre.count} comics
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 lg:justify-end">
-                        <button
-                          type="button"
-                          className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
-                        >
-                          <Edit3 className="h-4 w-4" />
-                          Edit genre
-                        </button>
-                        <button
-                          type="button"
-                          className="inline-flex h-11 items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-4 text-sm font-semibold text-white transition-colors hover:border-red-400/40 hover:bg-red-500/15"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete genre
-                        </button>
-                      </div>
-                    </article>
+                    <GenreRow key={genre.id} genre={genre} />
                   ))}
                 </div>
               ) : (
