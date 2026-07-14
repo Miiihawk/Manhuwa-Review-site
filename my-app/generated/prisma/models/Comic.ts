@@ -43,6 +43,7 @@ export type ComicSumAggregateOutputType = {
 export type ComicMinAggregateOutputType = {
   id: number | null
   title: string | null
+  alternativeName: string | null
   slug: string | null
   synopsis: string | null
   coverPhoto: string | null
@@ -58,6 +59,7 @@ export type ComicMinAggregateOutputType = {
 export type ComicMaxAggregateOutputType = {
   id: number | null
   title: string | null
+  alternativeName: string | null
   slug: string | null
   synopsis: string | null
   coverPhoto: string | null
@@ -73,6 +75,7 @@ export type ComicMaxAggregateOutputType = {
 export type ComicCountAggregateOutputType = {
   id: number
   title: number
+  alternativeName: number
   slug: number
   synopsis: number
   coverPhoto: number
@@ -104,6 +107,7 @@ export type ComicSumAggregateInputType = {
 export type ComicMinAggregateInputType = {
   id?: true
   title?: true
+  alternativeName?: true
   slug?: true
   synopsis?: true
   coverPhoto?: true
@@ -119,6 +123,7 @@ export type ComicMinAggregateInputType = {
 export type ComicMaxAggregateInputType = {
   id?: true
   title?: true
+  alternativeName?: true
   slug?: true
   synopsis?: true
   coverPhoto?: true
@@ -134,6 +139,7 @@ export type ComicMaxAggregateInputType = {
 export type ComicCountAggregateInputType = {
   id?: true
   title?: true
+  alternativeName?: true
   slug?: true
   synopsis?: true
   coverPhoto?: true
@@ -236,6 +242,7 @@ export type ComicGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type ComicGroupByOutputType = {
   id: number
   title: string
+  alternativeName: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -274,6 +281,7 @@ export type ComicWhereInput = {
   NOT?: Prisma.ComicWhereInput | Prisma.ComicWhereInput[]
   id?: Prisma.IntFilter<"Comic"> | number
   title?: Prisma.StringFilter<"Comic"> | string
+  alternativeName?: Prisma.StringNullableFilter<"Comic"> | string | null
   slug?: Prisma.StringFilter<"Comic"> | string
   synopsis?: Prisma.StringFilter<"Comic"> | string
   coverPhoto?: Prisma.StringFilter<"Comic"> | string
@@ -297,6 +305,7 @@ export type ComicWhereInput = {
 export type ComicOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  alternativeName?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   synopsis?: Prisma.SortOrder
   coverPhoto?: Prisma.SortOrder
@@ -324,6 +333,7 @@ export type ComicWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ComicWhereInput[]
   NOT?: Prisma.ComicWhereInput | Prisma.ComicWhereInput[]
   title?: Prisma.StringFilter<"Comic"> | string
+  alternativeName?: Prisma.StringNullableFilter<"Comic"> | string | null
   synopsis?: Prisma.StringFilter<"Comic"> | string
   coverPhoto?: Prisma.StringFilter<"Comic"> | string
   author?: Prisma.StringFilter<"Comic"> | string
@@ -346,6 +356,7 @@ export type ComicWhereUniqueInput = Prisma.AtLeast<{
 export type ComicOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  alternativeName?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   synopsis?: Prisma.SortOrder
   coverPhoto?: Prisma.SortOrder
@@ -369,6 +380,7 @@ export type ComicScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ComicScalarWhereWithAggregatesInput | Prisma.ComicScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Comic"> | number
   title?: Prisma.StringWithAggregatesFilter<"Comic"> | string
+  alternativeName?: Prisma.StringNullableWithAggregatesFilter<"Comic"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Comic"> | string
   synopsis?: Prisma.StringWithAggregatesFilter<"Comic"> | string
   coverPhoto?: Prisma.StringWithAggregatesFilter<"Comic"> | string
@@ -383,6 +395,7 @@ export type ComicScalarWhereWithAggregatesInput = {
 
 export type ComicCreateInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -404,6 +417,7 @@ export type ComicCreateInput = {
 export type ComicUncheckedCreateInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -424,6 +438,7 @@ export type ComicUncheckedCreateInput = {
 
 export type ComicUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -445,6 +460,7 @@ export type ComicUpdateInput = {
 export type ComicUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -466,6 +482,7 @@ export type ComicUncheckedUpdateInput = {
 export type ComicCreateManyInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -480,6 +497,7 @@ export type ComicCreateManyInput = {
 
 export type ComicUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -493,6 +511,7 @@ export type ComicUpdateManyMutationInput = {
 export type ComicUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -518,6 +537,7 @@ export type ComicOrderByRelationAggregateInput = {
 export type ComicCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  alternativeName?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   synopsis?: Prisma.SortOrder
   coverPhoto?: Prisma.SortOrder
@@ -540,6 +560,7 @@ export type ComicAvgOrderByAggregateInput = {
 export type ComicMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  alternativeName?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   synopsis?: Prisma.SortOrder
   coverPhoto?: Prisma.SortOrder
@@ -555,6 +576,7 @@ export type ComicMaxOrderByAggregateInput = {
 export type ComicMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  alternativeName?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   synopsis?: Prisma.SortOrder
   coverPhoto?: Prisma.SortOrder
@@ -768,6 +790,7 @@ export type ComicUpdateOneWithoutCommentsNestedInput = {
 
 export type ComicCreateWithoutCreatedByInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -788,6 +811,7 @@ export type ComicCreateWithoutCreatedByInput = {
 export type ComicUncheckedCreateWithoutCreatedByInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -837,6 +861,7 @@ export type ComicScalarWhereInput = {
   NOT?: Prisma.ComicScalarWhereInput | Prisma.ComicScalarWhereInput[]
   id?: Prisma.IntFilter<"Comic"> | number
   title?: Prisma.StringFilter<"Comic"> | string
+  alternativeName?: Prisma.StringNullableFilter<"Comic"> | string | null
   slug?: Prisma.StringFilter<"Comic"> | string
   synopsis?: Prisma.StringFilter<"Comic"> | string
   coverPhoto?: Prisma.StringFilter<"Comic"> | string
@@ -851,6 +876,7 @@ export type ComicScalarWhereInput = {
 
 export type ComicCreateWithoutCategoryInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -871,6 +897,7 @@ export type ComicCreateWithoutCategoryInput = {
 export type ComicUncheckedCreateWithoutCategoryInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -916,6 +943,7 @@ export type ComicUpdateManyWithWhereWithoutCategoryInput = {
 
 export type ComicCreateWithoutGenresInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -936,6 +964,7 @@ export type ComicCreateWithoutGenresInput = {
 export type ComicUncheckedCreateWithoutGenresInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -971,6 +1000,7 @@ export type ComicUpdateToOneWithWhereWithoutGenresInput = {
 
 export type ComicUpdateWithoutGenresInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -991,6 +1021,7 @@ export type ComicUpdateWithoutGenresInput = {
 export type ComicUncheckedUpdateWithoutGenresInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1010,6 +1041,7 @@ export type ComicUncheckedUpdateWithoutGenresInput = {
 
 export type ComicCreateWithoutSourcesInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1030,6 +1062,7 @@ export type ComicCreateWithoutSourcesInput = {
 export type ComicUncheckedCreateWithoutSourcesInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1065,6 +1098,7 @@ export type ComicUpdateToOneWithWhereWithoutSourcesInput = {
 
 export type ComicUpdateWithoutSourcesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1085,6 +1119,7 @@ export type ComicUpdateWithoutSourcesInput = {
 export type ComicUncheckedUpdateWithoutSourcesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1104,6 +1139,7 @@ export type ComicUncheckedUpdateWithoutSourcesInput = {
 
 export type ComicCreateWithoutReviewsInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1124,6 +1160,7 @@ export type ComicCreateWithoutReviewsInput = {
 export type ComicUncheckedCreateWithoutReviewsInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1159,6 +1196,7 @@ export type ComicUpdateToOneWithWhereWithoutReviewsInput = {
 
 export type ComicUpdateWithoutReviewsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1179,6 +1217,7 @@ export type ComicUpdateWithoutReviewsInput = {
 export type ComicUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1198,6 +1237,7 @@ export type ComicUncheckedUpdateWithoutReviewsInput = {
 
 export type ComicCreateWithoutFavoritesInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1218,6 +1258,7 @@ export type ComicCreateWithoutFavoritesInput = {
 export type ComicUncheckedCreateWithoutFavoritesInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1253,6 +1294,7 @@ export type ComicUpdateToOneWithWhereWithoutFavoritesInput = {
 
 export type ComicUpdateWithoutFavoritesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1273,6 +1315,7 @@ export type ComicUpdateWithoutFavoritesInput = {
 export type ComicUncheckedUpdateWithoutFavoritesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1292,6 +1335,7 @@ export type ComicUncheckedUpdateWithoutFavoritesInput = {
 
 export type ComicCreateWithoutListEntriesInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1312,6 +1356,7 @@ export type ComicCreateWithoutListEntriesInput = {
 export type ComicUncheckedCreateWithoutListEntriesInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1347,6 +1392,7 @@ export type ComicUpdateToOneWithWhereWithoutListEntriesInput = {
 
 export type ComicUpdateWithoutListEntriesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1367,6 +1413,7 @@ export type ComicUpdateWithoutListEntriesInput = {
 export type ComicUncheckedUpdateWithoutListEntriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1386,6 +1433,7 @@ export type ComicUncheckedUpdateWithoutListEntriesInput = {
 
 export type ComicCreateWithoutCommentsInput = {
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1406,6 +1454,7 @@ export type ComicCreateWithoutCommentsInput = {
 export type ComicUncheckedCreateWithoutCommentsInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1441,6 +1490,7 @@ export type ComicUpdateToOneWithWhereWithoutCommentsInput = {
 
 export type ComicUpdateWithoutCommentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1461,6 +1511,7 @@ export type ComicUpdateWithoutCommentsInput = {
 export type ComicUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1481,6 +1532,7 @@ export type ComicUncheckedUpdateWithoutCommentsInput = {
 export type ComicCreateManyCreatedByInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1494,6 +1546,7 @@ export type ComicCreateManyCreatedByInput = {
 
 export type ComicUpdateWithoutCreatedByInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1514,6 +1567,7 @@ export type ComicUpdateWithoutCreatedByInput = {
 export type ComicUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1534,6 +1588,7 @@ export type ComicUncheckedUpdateWithoutCreatedByInput = {
 export type ComicUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1548,6 +1603,7 @@ export type ComicUncheckedUpdateManyWithoutCreatedByInput = {
 export type ComicCreateManyCategoryInput = {
   id?: number
   title: string
+  alternativeName?: string | null
   slug: string
   synopsis: string
   coverPhoto: string
@@ -1561,6 +1617,7 @@ export type ComicCreateManyCategoryInput = {
 
 export type ComicUpdateWithoutCategoryInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1581,6 +1638,7 @@ export type ComicUpdateWithoutCategoryInput = {
 export type ComicUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1601,6 +1659,7 @@ export type ComicUncheckedUpdateWithoutCategoryInput = {
 export type ComicUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   synopsis?: Prisma.StringFieldUpdateOperationsInput | string
   coverPhoto?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1691,6 +1750,7 @@ export type ComicCountOutputTypeCountListEntriesArgs<ExtArgs extends runtime.Typ
 export type ComicSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  alternativeName?: boolean
   slug?: boolean
   synopsis?: boolean
   coverPhoto?: boolean
@@ -1715,6 +1775,7 @@ export type ComicSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type ComicSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  alternativeName?: boolean
   slug?: boolean
   synopsis?: boolean
   coverPhoto?: boolean
@@ -1732,6 +1793,7 @@ export type ComicSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type ComicSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  alternativeName?: boolean
   slug?: boolean
   synopsis?: boolean
   coverPhoto?: boolean
@@ -1749,6 +1811,7 @@ export type ComicSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type ComicSelectScalar = {
   id?: boolean
   title?: boolean
+  alternativeName?: boolean
   slug?: boolean
   synopsis?: boolean
   coverPhoto?: boolean
@@ -1761,7 +1824,7 @@ export type ComicSelectScalar = {
   createdById?: boolean
 }
 
-export type ComicOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "synopsis" | "coverPhoto" | "author" | "averageRating" | "publicationStatus" | "createdAt" | "updatedAt" | "categoryId" | "createdById", ExtArgs["result"]["comic"]>
+export type ComicOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "alternativeName" | "slug" | "synopsis" | "coverPhoto" | "author" | "averageRating" | "publicationStatus" | "createdAt" | "updatedAt" | "categoryId" | "createdById", ExtArgs["result"]["comic"]>
 export type ComicInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.ComicCategoryDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1797,6 +1860,7 @@ export type $ComicPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     title: string
+    alternativeName: string | null
     slug: string
     synopsis: string
     coverPhoto: string
@@ -2240,6 +2304,7 @@ export interface Prisma__ComicClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface ComicFieldRefs {
   readonly id: Prisma.FieldRef<"Comic", 'Int'>
   readonly title: Prisma.FieldRef<"Comic", 'String'>
+  readonly alternativeName: Prisma.FieldRef<"Comic", 'String'>
   readonly slug: Prisma.FieldRef<"Comic", 'String'>
   readonly synopsis: Prisma.FieldRef<"Comic", 'String'>
   readonly coverPhoto: Prisma.FieldRef<"Comic", 'String'>

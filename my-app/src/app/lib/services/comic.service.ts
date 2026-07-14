@@ -26,6 +26,14 @@ export class ComicService {
     return comicRepository.findHighestRated();
   }
 
+  deleteComic(id: number) {
+    return comicRepository.delete(id);
+  }
+
+  getComicById(id: number) {
+    return comicRepository.findById(id);
+  }
+
   async seedComics() {
     const existing = await comicRepository.count();
     if (existing > 0) {
@@ -102,6 +110,52 @@ export class ComicService {
       categoryId: category.id,
       createdById,
       publicationStatus: input.publicationStatus,
+    });
+  }
+
+  async updateComic(id: number, input: ComicInput) {
+    const existing = await comicRepository.findById(id);
+    if (!existing) {
+      throw new Error("COMIC_NOT_FOUND");
+    }
+
+    // Slug must stay unique — but it's fine if it's still this comic's own slug.
+    const bySlug = await comicRepository.findBySlug(input.slug);
+    if (bySlug && bySlug.id !== id) {
+      throw new Error("SLUG_TAKEN");
+    }
+
+    const categorySlug = input.category.toLowerCase().replace(/\s+/g, "-");
+    let category = await comicCategoryRepository.findBySlug(categorySlug);
+    if (!category) {
+      category = await comicCategoryRepository.create({
+        name: input.category,
+        slug: categorySlug,
+      });
+    }
+
+    const genreIds: number[] = [];
+    if (input.genres) {
+      for (const name of input.genres) {
+        const genreSlug = name.toLowerCase().replace(/\s+/g, "-");
+        let genre = await genreRepository.findBySlug(genreSlug);
+        if (!genre) {
+          genre = await genreRepository.create({ name, slug: genreSlug });
+        }
+        genreIds.push(genre.id);
+      }
+    }
+
+    return comicRepository.update(id, {
+      title: input.title,
+      alternativeName: input.alternativeName || null,
+      slug: input.slug,
+      synopsis: input.synopsis,
+      coverPhoto: input.coverPhoto,
+      author: input.author,
+      categoryId: category.id,
+      publicationStatus: input.publicationStatus,
+      genreIds,
     });
   }
 }

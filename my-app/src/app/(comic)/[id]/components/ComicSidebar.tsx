@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Star, Heart, Edit3, Info, Tag, User } from "lucide-react";
-import { TabType } from "../page";
+import type { TabType } from "../page";
 import { useState, useEffect } from "react";
 import ReadingListButton from "./ReadingListButton";
 
@@ -10,11 +10,20 @@ interface ComicSidebarProps {
   comic: {
     title: string;
     image: string;
-    type?: string;
+    author: string;
+    averageRating: number | null;
+    status: string;
+    category: string | null;
+    genres: string[];
+    favoritesCount: number;
   };
   slug: string;
   setActiveSubTab: (tab: TabType) => void;
   setIsReviewModalOpen: (open: boolean) => void;
+}
+
+function formatStatus(status: string) {
+  return status.charAt(0) + status.slice(1).toLowerCase().replace(/_/g, " ");
 }
 
 export default function ComicSidebar({
@@ -71,11 +80,12 @@ export default function ComicSidebar({
     }
   }
 
-  const author = "Fanmison / Luminara";
-  const category = comic.type || "Manhwa";
-  const genres = ["Action", "Fantasy", "Drama", "Shonen"];
-  const averageRating = "4.8";
-  const publicationStatus = "Ongoing";
+  const author = comic.author;
+  const category = comic.category ?? "Unknown";
+  const genres = comic.genres;
+  const averageRating =
+    comic.averageRating != null ? String(comic.averageRating) : "—";
+  const publicationStatus = formatStatus(comic.status);
 
   const handleWriteReviewClick = () => {
     setActiveSubTab("reviews");
@@ -96,7 +106,6 @@ export default function ComicSidebar({
       </div>
 
       <div className="grid grid-cols-4 gap-2 mt-4">
-        {/* Main Action Button - Spans 2 columns */}
         <button
           onClick={handleWriteReviewClick}
           className="col-span-2 flex h-11 items-center justify-center gap-1.5 rounded-lg bg-[#ff018f] hover:bg-[#ff018f]/90 text-xs font-black transition active:scale-95 text-white shadow-md select-none animate-fade-in"
@@ -105,10 +114,8 @@ export default function ComicSidebar({
           Write a Review <Edit3 className="h-3.5 w-3.5" />
         </button>
 
-        {/* Library List Icon Button */}
         <ReadingListButton slug={slug} />
 
-        {/* Add to Favorites Icon Button */}
         <button
           onClick={toggleFavorite}
           disabled={favLoading}
@@ -135,7 +142,7 @@ export default function ComicSidebar({
         <div className="flex items-center gap-2.5">
           <Heart className="h-5 w-5 text-[#ff018f] fill-current" />
           <div>
-            <div className="text-sm font-black">1.7K</div>
+            <div className="text-sm font-black">{comic.favoritesCount}</div>
             <div className="text-[10px] text-white/40 font-medium">
               Favorites
             </div>
@@ -169,14 +176,18 @@ export default function ComicSidebar({
         <div className="flex flex-col gap-1.5 pt-1 border-t border-white/5">
           <div className="text-white/40">Genres</div>
           <div className="flex flex-wrap gap-1 mt-0.5">
-            {genres.map((g) => (
-              <span
-                key={g}
-                className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[10px] font-medium border border-white/5"
-              >
-                {g}
-              </span>
-            ))}
+            {genres.length > 0 ? (
+              genres.map((g) => (
+                <span
+                  key={g}
+                  className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[10px] font-medium border border-white/5"
+                >
+                  {g}
+                </span>
+              ))
+            ) : (
+              <span className="text-white/30 text-[10px]">No genres yet</span>
+            )}
           </div>
         </div>
       </div>
