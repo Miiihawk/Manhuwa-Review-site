@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,7 +37,10 @@ export default function AdminComicCreatePage() {
     synopsis: "",
   });
 
+  //All state
   const [uploadingCover, setUploadingCover] = useState(false);
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
 
   const toggleGenre = (genre: string) => {
     setFormData((current) => {
@@ -77,6 +80,41 @@ export default function AdminComicCreatePage() {
       alert("Upload failed — check your connection.");
     } finally {
       setUploadingCover(false);
+    }
+  }
+
+  async function handleCreate() {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/comics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          alternativeName: formData.alternativeName,
+          slug: formData.slug,
+          synopsis: formData.synopsis,
+          coverPhoto: formData.coverPhoto,
+          author: formData.author,
+          genres: formData.genres,
+          category: formData.category,
+          publicationStatus: formData.status,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        alert(data.error || "Could not create comic. Check the fields.");
+        return;
+      }
+
+      router.push(`/comic/${data.slug}`); // go to the new comic's page
+    } catch (error) {
+      console.error("Create comic failed:", error);
+      alert("Could not create comic — check your connection.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -323,10 +361,12 @@ export default function AdminComicCreatePage() {
                 <div className="grid gap-3 pt-2 sm:grid-cols-2">
                   <button
                     type="button"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5"
+                    onClick={handleCreate}
+                    disabled={submitting}
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60"
                   >
                     <Plus className="h-4 w-4" />
-                    Create comic
+                    {submitting ? "Creating…" : "Create comic"}
                   </button>
                   <button
                     type="button"

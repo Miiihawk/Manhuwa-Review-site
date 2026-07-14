@@ -11,6 +11,7 @@ import type { TabType } from "./page";
 interface ComicDetailProps {
   comic: {
     title: string;
+    alternativeName?: string | null;
     coverPhoto: string;
     synopsis: string;
     _count: { reviews: number };
@@ -58,7 +59,9 @@ export default function ComicDetail({ comic, slug }: ComicDetailProps) {
           {/* RIGHT MAIN PANEL COLUMN */}
           <div className="flex flex-col">
             <p className="text-xs text-white/40 font-medium tracking-wide">
-              {uiComic.title} /
+              {comic.alternativeName
+                ? `${uiComic.title} / ${comic.alternativeName}`
+                : uiComic.title}
             </p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
               {uiComic.title}

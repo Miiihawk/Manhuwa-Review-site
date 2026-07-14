@@ -86,6 +86,7 @@ model ComicCategory {
 model Comic {
   id                Int           @id @default(autoincrement())
   title             String
+  alternativeName   String?
   slug              String        @unique
   synopsis          String
   coverPhoto        String

@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Bookmark, Heart, Edit3, Info, Tag, User } from "lucide-react";
+import { Star, Heart, Edit3, Info, Tag, User } from "lucide-react";
 import { TabType } from "../page";
 import { useState, useEffect } from "react";
+import ReadingListButton from "./ReadingListButton";
 
 interface ComicSidebarProps {
   comic: {
@@ -105,12 +106,7 @@ export default function ComicSidebar({
         </button>
 
         {/* Library List Icon Button */}
-        <button
-          className="flex h-11 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition active:scale-95 text-white/80 hover:text-white select-none"
-          title="Library List"
-        >
-          <Bookmark className="h-4 w-4 fill-current" />
-        </button>
+        <ReadingListButton slug={slug} />
 
         {/* Add to Favorites Icon Button */}
         <button
