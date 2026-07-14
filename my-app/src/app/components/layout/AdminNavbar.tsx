@@ -36,7 +36,11 @@ const mockNotifications = [
 const adminShortcuts = [
   { href: "/admin/comics", label: "Comic Management", icon: BookOpen },
   { href: "/admin/users", label: "User Management", icon: Users },
-  { href: "/admin/reviews", label: "Review Management", icon: MessageSquare },
+  {
+    href: "/admin/reviews",
+    label: "Review and Comment Management",
+    icon: MessageSquare,
+  },
   { href: "/admin/genres", label: "Genre Management", icon: Tag },
   { href: "/admin/categories", label: "Category Management", icon: Folder },
 ];
