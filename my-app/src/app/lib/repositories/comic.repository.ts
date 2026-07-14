@@ -1,4 +1,5 @@
 import { prisma } from "../prisma";
+import type { ComicStatus } from "@prisma-generated";
 
 export class ComicRepository {
   //read
@@ -42,14 +43,27 @@ export class ComicRepository {
 
   create(data: {
     title: string;
+    alternativeName?: string | null;
     slug: string;
     synopsis: string;
     coverPhoto: string;
     author: string;
     categoryId: number;
     createdById: number;
+    publicationStatus?: ComicStatus;
+    genreIds?: number[];
   }) {
-    return prisma.comic.create({ data });
+    const { genreIds, ...comicData } = data;
+
+    return prisma.comic.create({
+      data: {
+        ...comicData,
+        genres:
+          genreIds && genreIds.length > 0
+            ? { create: genreIds.map((genreId) => ({ genreId })) }
+            : undefined,
+      },
+    });
   }
 
   //Update

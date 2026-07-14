@@ -2,6 +2,8 @@ import { comicRepository } from "../repositories/comic.repository";
 import { comicCategoryRepository } from "../repositories/comic-cat.repo";
 import { userRepository } from "../repositories/user.repository";
 import { featuredCovers } from "@/app/data/comic";
+import type { ComicInput } from "../validators/comic.schema";
+import { genreRepository } from "../repositories/genre.repository";
 
 export class ComicService {
   listComics() {
@@ -58,6 +60,49 @@ export class ComicService {
       });
     }
     console.log(`[seed] Created ${featuredCovers.length} comics.`);
+  }
+
+  async createComic(createdById: number, input: ComicInput) {
+    // Slug must be unique — it's the page URL.
+    const existing = await comicRepository.findBySlug(input.slug);
+    if (existing) {
+      throw new Error("SLUG_TAKEN");
+    }
+
+    // Resolve the category name → id (create it if it doesn't exist yet).
+    const categorySlug = input.category.toLowerCase().replace(/\s+/g, "-");
+    let category = await comicCategoryRepository.findBySlug(categorySlug);
+    if (!category) {
+      category = await comicCategoryRepository.create({
+        name: input.category,
+        slug: categorySlug,
+      });
+    }
+
+    const genreIds: number[] = [];
+    if (input.genres) {
+      for (const name of input.genres) {
+        const genreSlug = name.toLowerCase().replace(/\s+/g, "-");
+        let genre = await genreRepository.findBySlug(genreSlug);
+        if (!genre) {
+          genre = await genreRepository.create({ name, slug: genreSlug });
+        }
+        genreIds.push(genre.id);
+      }
+    }
+
+    return comicRepository.create({
+      title: input.title,
+      alternativeName: input.alternativeName || null,
+      slug: input.slug,
+      synopsis: input.synopsis,
+      coverPhoto: input.coverPhoto,
+      author: input.author,
+      genreIds,
+      categoryId: category.id,
+      createdById,
+      publicationStatus: input.publicationStatus,
+    });
   }
 }
 
