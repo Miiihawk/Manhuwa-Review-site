@@ -245,6 +245,7 @@ export default function AdminComicEditPage() {
 											<option value="COMPLETED">COMPLETED</option>
 											<option value="HIATUS">HIATUS</option>
 											<option value="COMING_SOON">COMING_SOON</option>
+											<option value="DRAFT">DRAFT</option>
 										</select>
 									</label>
 								</div>
@@ -340,7 +341,7 @@ export default function AdminComicEditPage() {
 										className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition-colors hover:border-[#f6a1ff]/40 hover:bg-white/10"
 									>
 										<Save className="h-4 w-4" />
-										Save draft
+										Cancel edit
 									</button>
 								</div>
 							</form>

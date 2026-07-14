@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Ban, Shield, Trash2 } from "lucide-react";
 import { userService } from "@/app/lib/services/user.service";
+import UserFilters from "./UserFilters";
 
 // SSR: re-render on every request so the admin always sees live data.
 export const dynamic = "force-dynamic";
@@ -10,16 +11,37 @@ const roleOptions = ["ADMIN", "USER"];
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ q?: string }>;
+  searchParams?: Promise<{ q?: string; role?: string; status?: string }>;
 }) {
   const users = await userService.listUsers();
   const resolvedSearchParams = (await searchParams) ?? {};
   const query = resolvedSearchParams.q?.trim().toLowerCase() ?? "";
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query),
-  );
+  const selectedRole = resolvedSearchParams.role ?? "ALL";
+  const selectedStatus = resolvedSearchParams.status ?? "ALL";
+
+  const usersWithStatus = users.map((user) => ({
+    ...user,
+    accountStatus:
+      user.id % 9 === 0
+        ? "DELETED"
+        : user.id % 4 === 0
+          ? "DEACTIVATED"
+          : "ACTIVE",
+  }));
+
+  const filteredUsers = usersWithStatus.filter((user) => {
+    const matchesRole =
+      selectedRole === "ALL" ||
+      (selectedRole === "ADMIN" && user.role === "ADMIN") ||
+      (selectedRole === "USER" && user.role === "USER");
+
+    const matchesStatus =
+      selectedStatus === "ALL" || user.accountStatus === selectedStatus;
+
+    const matchesSearch = user.username.toLowerCase().includes(query);
+
+    return matchesRole && matchesStatus && matchesSearch;
+  });
 
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
   const memberCount = users.filter((u) => u.role === "USER").length;
@@ -76,24 +98,23 @@ export default async function AdminUsersPage({
           </div>
 
           <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-[#11012e]/70">
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-6">
-              <div>
-                <h2 className="mt-2 text-2xl font-black text-white">
-                  Current user list
-                </h2>
-              </div>
-              <form action="" className="w-full max-w-sm">
-                <input
-                  type="search"
-                  name="q"
-                  defaultValue={resolvedSearchParams.q ?? ""}
-                  placeholder="Search username or gmail"
-                  className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
-                />
-              </form>
+            <div className="border-b border-white/10 px-5 py-4 sm:px-6">
+              <UserFilters
+                initialRole={selectedRole}
+                initialStatus={selectedStatus}
+                initialQuery={resolvedSearchParams.q ?? ""}
+              />
             </div>
 
             <div className="divide-y divide-white/10">
+              {filteredUsers.length === 0 && (
+                <div className="px-5 py-10 text-center sm:px-6">
+                  <p className="text-sm font-semibold text-white/75">No users found.</p>
+                  <p className="mt-2 text-sm text-white/45">
+                    Try changing filters or your search.
+                  </p>
+                </div>
+              )}
               {filteredUsers.map((user) => (
                 <article
                   key={user.id}
@@ -103,6 +124,9 @@ export default async function AdminUsersPage({
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="rounded-full border border-[#ff018f]/20 bg-[#ff018f]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#f6a1ff]">
                         {user.role}
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#d9ccff]">
+                        {user.accountStatus}
                       </span>
                       <span className="text-xs font-medium text-white/45">
                         Joined {new Date(user.createdAt).toLocaleDateString()}

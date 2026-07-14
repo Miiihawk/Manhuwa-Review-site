@@ -83,6 +83,14 @@ export default function AdminCategoriesPage() {
 							</div>
 
 							<div className="divide-y divide-white/10">
+								{filteredCategories.length === 0 && (
+									<div className="px-5 py-10 text-center sm:px-6">
+										<p className="text-sm font-semibold text-white/75">No categories found.</p>
+										<p className="mt-2 text-sm text-white/45">
+											Try changing your search.
+										</p>
+									</div>
+								)}
 								{filteredCategories.map((category) => (
 									<article
 										key={category.id}
@@ -152,7 +160,7 @@ export default function AdminCategoriesPage() {
 				{editingCategory && (
 					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 px-6">
 						<div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#120529]/95 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
-							<div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+							<div className="border-b border-white/10 pb-4">
 								<div>
 									<p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f6a1ff]">
 										Edit category
@@ -161,13 +169,6 @@ export default function AdminCategoriesPage() {
 										{editingCategory.name}
 									</h2>
 								</div>
-								<button
-									type="button"
-									onClick={() => setEditingCategory(null)}
-									className="text-sm font-semibold text-white/55 transition-colors hover:text-white"
-								>
-									Close
-								</button>
 							</div>
 
 							<div className="mt-5 space-y-4">
@@ -197,13 +198,22 @@ export default function AdminCategoriesPage() {
 									/>
 								</label>
 
-								<button
-									type="button"
-									onClick={handleSaveCategory}
-									className="inline-flex h-12 items-center justify-center rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5"
-								>
-									Save
-								</button>
+								<div className="flex flex-wrap gap-3 pt-1">
+									<button
+										type="button"
+										onClick={() => setEditingCategory(null)}
+										className="inline-flex h-12 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition-colors hover:border-[#f6a1ff]/40 hover:bg-white/10"
+									>
+										Close
+									</button>
+									<button
+										type="button"
+										onClick={handleSaveCategory}
+										className="inline-flex h-12 items-center justify-center rounded-full bg-[linear-gradient(180deg,#ff018f_0%,#f6a1ff_100%)] px-5 text-sm font-black tracking-wide text-black shadow-[0_14px_32px_rgba(255,24,143,0.28)] transition-transform duration-200 hover:-translate-y-0.5"
+									>
+										Save
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
