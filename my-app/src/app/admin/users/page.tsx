@@ -1,17 +1,49 @@
 import Link from "next/link";
 import { ArrowLeft, Ban, Shield, Trash2 } from "lucide-react";
 import { userService } from "@/app/lib/services/user.service";
+import UserFilters from "./UserFilters";
 
 // SSR: re-render on every request so the admin always sees live data.
 export const dynamic = "force-dynamic";
 
-const roleOptions = ["ADMIN", "MODERATOR", "USER"];
+const roleOptions = ["ADMIN", "USER"];
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string; role?: string; status?: string }>;
+}) {
   const users = await userService.listUsers();
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const query = resolvedSearchParams.q?.trim().toLowerCase() ?? "";
+  const selectedRole = resolvedSearchParams.role ?? "ALL";
+  const selectedStatus = resolvedSearchParams.status ?? "ALL";
+
+  const usersWithStatus = users.map((user) => ({
+    ...user,
+    accountStatus:
+      user.id % 9 === 0
+        ? "DELETED"
+        : user.id % 4 === 0
+          ? "DEACTIVATED"
+          : "ACTIVE",
+  }));
+
+  const filteredUsers = usersWithStatus.filter((user) => {
+    const matchesRole =
+      selectedRole === "ALL" ||
+      (selectedRole === "ADMIN" && user.role === "ADMIN") ||
+      (selectedRole === "USER" && user.role === "USER");
+
+    const matchesStatus =
+      selectedStatus === "ALL" || user.accountStatus === selectedStatus;
+
+    const matchesSearch = user.username.toLowerCase().includes(query);
+
+    return matchesRole && matchesStatus && matchesSearch;
+  });
 
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
-  const moderatorCount = users.filter((u) => u.role === "MODERATOR").length;
   const memberCount = users.filter((u) => u.role === "USER").length;
 
   return (
@@ -42,28 +74,18 @@ export default async function AdminUsersPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <div className="rounded-2xl border border-[#ff018f]/25 bg-[#ff018f]/10 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f6a1ff]">
                 Total Users
               </p>
-              <p className="mt-1 text-lg font-black text-white">
-                {users.length}
-              </p>
+              <p className="mt-1 text-lg font-black text-white">{users.length}</p>
             </div>
             <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
                 Admins
               </p>
               <p className="mt-1 text-lg font-black text-white">{adminCount}</p>
-            </div>
-            <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
-                Moderators
-              </p>
-              <p className="mt-1 text-lg font-black text-white">
-                {moderatorCount}
-              </p>
             </div>
             <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
@@ -76,19 +98,24 @@ export default async function AdminUsersPage() {
           </div>
 
           <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-[#11012e]/70">
-            <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-6">
-              <div>
-                <h2 className="mt-2 text-2xl font-black text-white">
-                  Current user list
-                </h2>
-              </div>
-              <span className="rounded-full border border-[#d9ccff]/20 bg-[#d9ccff]/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.3em] text-[#d9ccff]">
-                {users.length} accounts
-              </span>
+            <div className="border-b border-white/10 px-5 py-4 sm:px-6">
+              <UserFilters
+                initialRole={selectedRole}
+                initialStatus={selectedStatus}
+                initialQuery={resolvedSearchParams.q ?? ""}
+              />
             </div>
 
             <div className="divide-y divide-white/10">
-              {users.map((user) => (
+              {filteredUsers.length === 0 && (
+                <div className="px-5 py-10 text-center sm:px-6">
+                  <p className="text-sm font-semibold text-white/75">No users found.</p>
+                  <p className="mt-2 text-sm text-white/45">
+                    Try changing filters or your search.
+                  </p>
+                </div>
+              )}
+              {filteredUsers.map((user) => (
                 <article
                   key={user.id}
                   className="grid gap-4 px-5 py-5 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-center"
@@ -97,6 +124,9 @@ export default async function AdminUsersPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="rounded-full border border-[#ff018f]/20 bg-[#ff018f]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#f6a1ff]">
                         {user.role}
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#d9ccff]">
+                        {user.accountStatus}
                       </span>
                       <span className="text-xs font-medium text-white/45">
                         Joined {new Date(user.createdAt).toLocaleDateString()}
@@ -134,6 +164,12 @@ export default async function AdminUsersPage() {
                     >
                       <Ban className="h-4 w-4" />
                       Deactivate
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
+                    >
+                      Save
                     </button>
                     <button
                       type="button"

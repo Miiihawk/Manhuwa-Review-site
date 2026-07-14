@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Edit3, Eye, Plus } from "lucide-react";
