@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import { userRepository } from "../repositories/user.repository";
-import type { RegisterInput, LoginInput } from "../validators/user.schema";
+import type {
+  RegisterInput,
+  LoginInput,
+  UpdateProfileInput,
+} from "../validators/user.schema";
 import { Role } from "../../../../generated/prisma/client";
 
 const BCRYPT_COST = 12;
@@ -62,6 +66,31 @@ export class UserService {
 
   async listUsers() {
     return userRepository.findMany();
+  }
+
+  async updateProfile(userId: number, input: UpdateProfileInput) {
+    const existing = await userRepository.findById(userId);
+    if (!existing) throw new Error("USER_NOT_FOUND");
+
+    if (input.username && input.username !== existing.username) {
+      const taken = await userRepository.findByUsername(input.username);
+      if (taken) throw new Error("USERNAME_TAKEN");
+    }
+
+    const data: {
+      username?: string;
+      bio?: string;
+      profilePic?: string;
+      passwordHash?: string;
+    } = {};
+    if (input.username !== undefined) data.username = input.username;
+    if (input.bio !== undefined) data.bio = input.bio;
+    if (input.profilePic !== undefined) data.profilePic = input.profilePic;
+    if (input.newPassword) {
+      data.passwordHash = await bcrypt.hash(input.newPassword, BCRYPT_COST);
+    }
+
+    return userRepository.update(userId, data);
   }
 }
 

@@ -23,6 +23,10 @@ export class FavoriteRepository {
       include: { comic: true },
     });
   }
+
+  countByUser(userId: number) {
+    return prisma.favorite.count({ where: { userId } });
+  }
 }
 
 export const favoriteRepository = new FavoriteRepository();

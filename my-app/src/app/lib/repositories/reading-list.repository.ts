@@ -29,6 +29,10 @@ export class ReadingListRepository {
       orderBy: { updatedAt: "desc" },
     });
   }
+
+  countByUserAndStatus(userId: number, status: ReadingListStatus) {
+    return prisma.readingList.count({ where: { userId, status } });
+  }
 }
 
 export const readingListRepository = new ReadingListRepository();
