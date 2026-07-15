@@ -27,6 +27,7 @@ interface EditComicFormProps {
     genres: string[];
     coverPhoto: string;
     synopsis: string;
+    officialLegalPlatforms: string[];
   };
 }
 
@@ -44,6 +45,11 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
     coverPhoto: comic.coverPhoto,
     synopsis: comic.synopsis,
   });
+  const [officialLegalPlatforms, setOfficialLegalPlatforms] = useState<string[]>(
+    comic.officialLegalPlatforms && comic.officialLegalPlatforms.length > 0
+      ? comic.officialLegalPlatforms.slice(0, 4)
+      : [""],
+  );
 
   const [genreChoices, setGenreChoices] = useState<string[]>([]);
   const [uploadingCover, setUploadingCover] = useState(false);
@@ -74,6 +80,18 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
           : [...current.genres, genre],
       };
     });
+  };
+
+  const addMoreLinks = () => {
+    setOfficialLegalPlatforms((current) =>
+      current.length >= 4 ? current : [...current, ""],
+    );
+  };
+
+  const updateLegalPlatform = (index: number, value: string) => {
+    setOfficialLegalPlatforms((current) =>
+      current.map((entry, entryIndex) => (entryIndex === index ? value : entry)),
+    );
   };
 
   async function handleCoverUpload(event: React.ChangeEvent<HTMLInputElement>) {
@@ -118,6 +136,7 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
           category: formData.category,
           publicationStatus: formData.status,
           genres: formData.genres,
+          officialLegalPlatforms,
         }),
       });
 
@@ -322,6 +341,40 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
                     placeholder="Write the comic description..."
                   />
                 </label>
+
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-white/75">
+                        Official Legal Platforms
+                      </p>
+                      <p className="mt-1 text-xs text-white/45">
+                        Paste up to four official reading links.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addMoreLinks}
+                      disabled={officialLegalPlatforms.length >= 4}
+                      className="inline-flex h-10 items-center justify-center rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-xs font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Add More Links
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {officialLegalPlatforms.map((link, index) => (
+                      <input
+                        key={index}
+                        type="url"
+                        value={link}
+                        onChange={(event) => updateLegalPlatform(index, event.target.value)}
+                        placeholder="Paste official platform link here"
+                        className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
+                      />
+                    ))}
+                  </div>
+                </div>
 
                 {/* ★ NEW (c): file upload + manual URL fallback */}
                 <label className="block">
