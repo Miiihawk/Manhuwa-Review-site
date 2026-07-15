@@ -45,6 +45,46 @@ export class ComicRepository {
     });
   }
 
+  findForDirectory(
+    filters: {
+      status?: ComicStatus;
+      categorySlug?: string;
+      genreSlug?: string;
+    },
+    sort: "rating" | "reviews" | "recent" | "title",
+  ) {
+    const orderBy =
+      sort === "reviews"
+        ? { reviews: { _count: "desc" as const } }
+        : sort === "recent"
+          ? { createdAt: "desc" as const }
+          : sort === "title"
+            ? { title: "asc" as const }
+            : {
+                averageRating: {
+                  sort: "desc" as const,
+                  nulls: "last" as const,
+                },
+              };
+
+    return prisma.comic.findMany({
+      where: {
+        ...(filters.status ? { publicationStatus: filters.status } : {}),
+        ...(filters.categorySlug
+          ? { category: { slug: filters.categorySlug } }
+          : {}),
+        ...(filters.genreSlug
+          ? { genres: { some: { genre: { slug: filters.genreSlug } } } }
+          : {}),
+      },
+      orderBy,
+      include: {
+        category: true,
+        _count: { select: { reviews: true } },
+      },
+    });
+  }
+
   findById(id: number) {
     return prisma.comic.findUnique({
       where: { id },
@@ -52,6 +92,13 @@ export class ComicRepository {
         category: true,
         genres: { include: { genre: true } },
       },
+    });
+  }
+
+  findSlugsByIds(ids: number[]) {
+    return prisma.comic.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, slug: true },
     });
   }
   //Create

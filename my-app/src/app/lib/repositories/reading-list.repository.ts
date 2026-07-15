@@ -33,6 +33,13 @@ export class ReadingListRepository {
   countByUserAndStatus(userId: number, status: ReadingListStatus) {
     return prisma.readingList.count({ where: { userId, status } });
   }
+
+  findUserIdsByComic(comicId: number) {
+    return prisma.readingList.findMany({
+      where: { comicId },
+      select: { userId: true },
+    });
+  }
 }
 
 export const readingListRepository = new ReadingListRepository();

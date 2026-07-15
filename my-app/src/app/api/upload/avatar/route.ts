@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 import path from "path";
 import { auth } from "@/app/lib/auth";
 
-const MAX_BYTES = 4 * 1024 * 1024; // 4 MB
+const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED = new Map([
   ["image/jpeg", "jpg"],
   ["image/png", "png"],
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     }
     if (file.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: "File too large (max 4MB)" },
+        { error: "File too large (max 10MB)" },
         { status: 400 },
       );
     }

@@ -35,6 +35,21 @@ export class ReviewService {
     if (!comic) return [];
     return reviewRepository.findByComic(comic.id);
   }
+
+  listRecentReviews(limit = 3) {
+    return reviewRepository.findRecent(limit);
+  }
+
+  async deleteReview(userId: number, reviewId: number) {
+    const existing = await reviewRepository.findById(reviewId);
+    if (!existing) throw new Error("REVIEW_NOT_FOUND");
+    if (existing.userId !== userId) throw new Error("FORBIDDEN");
+
+    const comicId = existing.comicId;
+    await reviewRepository.delete(reviewId);
+    await this.recalcAverage(comicId);
+    return { deleted: true };
+  }
 }
 
 export const reviewService = new ReviewService();

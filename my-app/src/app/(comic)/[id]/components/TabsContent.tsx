@@ -1,9 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Star, MessageSquare, ExternalLink, User } from "lucide-react";
+import {
+  Star,
+  MessageSquare,
+  ExternalLink,
+  User,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { TabType } from "../page";
 import ReviewFormModal from "./ReviewFormModal";
+import ReviewComments from "./ReviewComments";
+import ReportButton from "./ReportButton";
 
 interface TabsContentProps {
   activeSubTab: TabType;
@@ -18,9 +27,11 @@ interface TabsContentProps {
 
 interface Review {
   id: string;
+  userId: number | null;
   user: string;
   avatar: string | null;
   rating: number;
+  rawRating: number;
   date: string;
   text: string;
 }
@@ -33,6 +44,22 @@ export default function TabsContent({
   setIsReviewModalOpen,
 }: TabsContentProps) {
   const [communityReviews, setCommunityReviews] = useState<Review[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+
+  // Who am I? Needed to show edit/delete only on my own review + comments.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.user?.id) setCurrentUserId(Number(data.user.id));
+      })
+      .catch((error) => console.error("Failed to load session:", error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const loadReviews = useCallback(async () => {
     try {
@@ -47,12 +74,14 @@ export default function TabsContent({
             rating: number;
             review: string | null;
             createdAt: string;
-            user: { username: string; profilePic: string | null };
+            user: { id: number; username: string; profilePic: string | null };
           }) => ({
             id: String(r.id),
+            userId: r.user?.id ?? null,
             user: r.user?.username ?? "Unknown",
             avatar: r.user?.profilePic ?? null,
             rating: r.rating * 2,
+            rawRating: r.rating,
             date: new Date(r.createdAt).toLocaleDateString(),
             text: r.review ?? "",
           }),
@@ -106,10 +135,26 @@ export default function TabsContent({
         return;
       }
 
-      await loadReviews(); // pull the fresh list from the DB
+      await loadReviews();
     } catch (error) {
       console.error("Review submit failed:", error);
       alert("Could not save review — check your connection.");
+    }
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    if (!confirm("Delete your review? This can't be undone.")) return;
+    try {
+      const res = await fetch(`/api/reviews/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Could not delete review.");
+        return;
+      }
+      await loadReviews();
+    } catch (error) {
+      console.error("Review delete failed:", error);
+      alert("Could not delete review — check your connection.");
     }
   };
 
@@ -175,11 +220,37 @@ export default function TabsContent({
                     <div className="text-[11px] font-bold text-amber-400 flex items-center gap-0.5 bg-amber-400/5 px-2 py-0.5 rounded border border-amber-400/10">
                       <Star className="h-3 w-3 fill-current" /> {rev.rating}/10
                     </div>
+                    {currentUserId !== null && rev.userId === currentUserId && (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setEditingReview(rev)}
+                          title="Edit review"
+                          className="p-1.5 rounded-md bg-white/5 text-white/50 hover:text-white hover:bg-white/10 transition"
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReview(rev.id)}
+                          title="Delete review"
+                          className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                    {currentUserId !== null && rev.userId !== currentUserId && (
+                      <ReportButton target={{ reviewId: Number(rev.id) }} />
+                    )}
                   </div>
                 </div>
                 <p className="text-xs text-white/70 leading-relaxed font-light whitespace-pre-wrap">
                   {rev.text}
                 </p>
+
+                <ReviewComments
+                  reviewId={Number(rev.id)}
+                  currentUserId={currentUserId}
+                />
               </div>
             ))}
           </div>
@@ -225,11 +296,22 @@ export default function TabsContent({
         </div>
       )}
 
-      {/* RENDER SEPARATED FORM MODAL */}
+      {/* Create review modal (parent-controlled) */}
       {isReviewModalOpen && (
         <ReviewFormModal
           comicTitle={comic.title}
           onClose={() => setIsReviewModalOpen(false)}
+          onSubmit={handleAddReview}
+        />
+      )}
+
+      {/* Edit review modal (pre-filled; upsert updates the existing review) */}
+      {editingReview && (
+        <ReviewFormModal
+          comicTitle={comic.title}
+          initialText={editingReview.text}
+          initialRating={editingReview.rawRating}
+          onClose={() => setEditingReview(null)}
           onSubmit={handleAddReview}
         />
       )}

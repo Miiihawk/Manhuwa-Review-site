@@ -29,6 +29,26 @@ export class ReviewRepository {
       _avg: { rating: true },
     });
   }
+
+  findRecent(limit: number) {
+    return prisma.review.findMany({
+      where: { NOT: { review: null } },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: {
+        user: { select: { username: true, profilePic: true } },
+        comic: { select: { title: true, slug: true } },
+      },
+    });
+  }
+
+  findById(id: number) {
+    return prisma.review.findUnique({ where: { id } });
+  }
+
+  delete(id: number) {
+    return prisma.review.delete({ where: { id } });
+  }
 }
 
 export const reviewRepository = new ReviewRepository();

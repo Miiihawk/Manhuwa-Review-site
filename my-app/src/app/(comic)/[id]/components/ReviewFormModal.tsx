@@ -7,15 +7,19 @@ interface ReviewFormModalProps {
   comicTitle: string;
   onClose: () => void;
   onSubmit: (data: { text: string; rating: number }) => void;
+  initialText?: string;
+  initialRating?: number;
 }
 
 export default function ReviewFormModal({
   comicTitle,
   onClose,
   onSubmit,
+  initialText = "",
+  initialRating = 5,
 }: ReviewFormModalProps) {
-  const [reviewText, setReviewText] = useState("");
-  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState(initialText);
+  const [rating, setRating] = useState(initialRating);
 
   const displayScore = rating * 2;
 
