@@ -19,6 +19,7 @@ interface TabsContentProps {
 interface Review {
   id: string;
   user: string;
+  avatar: string | null;
   rating: number;
   date: string;
   text: string;
@@ -46,10 +47,11 @@ export default function TabsContent({
             rating: number;
             review: string | null;
             createdAt: string;
-            user: { username: string };
+            user: { username: string; profilePic: string | null };
           }) => ({
             id: String(r.id),
             user: r.user?.username ?? "Unknown",
+            avatar: r.user?.profilePic ?? null,
             rating: r.rating * 2,
             date: new Date(r.createdAt).toLocaleDateString(),
             text: r.review ?? "",
@@ -148,8 +150,17 @@ export default function TabsContent({
               >
                 <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                      <User className="h-3.5 w-3.5 text-white/60" />
+                    <div className="h-7 w-7 rounded-full bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+                      {rev.avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={rev.avatar}
+                          alt={rev.user}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-3.5 w-3.5 text-white/60" />
+                      )}
                     </div>
                     <div>
                       <div className="text-xs font-black text-white/90">

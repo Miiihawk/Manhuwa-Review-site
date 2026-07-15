@@ -54,12 +54,15 @@ export class UserRepository {
       username?: string;
       email?: string;
       passwordHash?: string;
+      bio?: string;
+      profilePic?: string;
       role?: Role;
     },
   ) {
     return prisma.user.update({
       where: { id },
       data: data,
+      omit: { passwordHash: true },
     });
   }
 }
