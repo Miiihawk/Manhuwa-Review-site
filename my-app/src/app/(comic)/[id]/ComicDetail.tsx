@@ -18,7 +18,7 @@ interface ComicDetailProps {
     averageRating: number | null;
     publicationStatus: string;
     category: { name: string } | null;
-    genres: { genre: { name: string } }[];
+    genres: { genre: { name: string; slug: string } }[];
     _count: { reviews: number; favorites: number };
     sources: { name: string; url: string }[];
   };
@@ -43,7 +43,10 @@ export default function ComicDetail({ comic, slug }: ComicDetailProps) {
     averageRating: comic.averageRating,
     status: comic.publicationStatus,
     category: comic.category?.name ?? null,
-    genres: comic.genres.map((g) => g.genre.name),
+    genres: comic.genres.map((g) => ({
+      name: g.genre.name,
+      slug: g.genre.slug,
+    })),
     favoritesCount: comic._count.favorites,
   };
 

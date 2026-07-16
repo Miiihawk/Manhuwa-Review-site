@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Star, Heart, Edit3, Info, Tag, User } from "lucide-react";
 import type { TabType } from "../page";
 import { useState, useEffect } from "react";
@@ -14,7 +15,7 @@ interface ComicSidebarProps {
     averageRating: number | null;
     status: string;
     category: string | null;
-    genres: string[];
+    genres: { name: string; slug: string }[];
     favoritesCount: number;
   };
   slug: string;
@@ -178,12 +179,13 @@ export default function ComicSidebar({
           <div className="flex flex-wrap gap-1 mt-0.5">
             {genres.length > 0 ? (
               genres.map((g) => (
-                <span
-                  key={g}
-                  className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[10px] font-medium border border-white/5"
+                <Link
+                  key={g.slug}
+                  href={`/comicseries?genre=${g.slug}`}
+                  className="bg-white/5 text-white/70 hover:bg-pink-600 hover:text-white hover:border-pink-500/30 px-2 py-0.5 rounded text-[10px] font-medium border border-white/5 transition-colors"
                 >
-                  {g}
-                </span>
+                  {g.name}
+                </Link>
               ))
             ) : (
               <span className="text-white/30 text-[10px]">No genres yet</span>
