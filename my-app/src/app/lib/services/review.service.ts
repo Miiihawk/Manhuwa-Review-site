@@ -30,6 +30,10 @@ export class ReviewService {
     return reviewRepository.findByComic(comicId);
   }
 
+  listForUser(userId: number) {
+    return reviewRepository.findByUser(userId);
+  }
+
   async listReviewsBySlug(slug: string) {
     const comic = await comicRepository.findBySlug(slug);
     if (!comic) return [];
@@ -49,6 +53,9 @@ export class ReviewService {
     await reviewRepository.delete(reviewId);
     await this.recalcAverage(comicId);
     return { deleted: true };
+  }
+  countReviews() {
+    return reviewRepository.count();
   }
 }
 

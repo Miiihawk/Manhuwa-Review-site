@@ -19,6 +19,32 @@ const VALID_STATUSES: ComicStatus[] = [
   "HIATUS",
 ];
 
+function normalizeUrl(url: string) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+
+function deriveSourceName(url: string) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    const label = host.split(".")[0];
+    return label ? label.charAt(0).toUpperCase() + label.slice(1) : "Official";
+  } catch {
+    return "Official";
+  }
+}
+
+function buildSources(urls?: string[]) {
+  if (!urls) return [];
+  return urls
+    .map((u) => u.trim())
+    .filter((u) => u.length > 0)
+    .slice(0, 4)
+    .map((u) => {
+      const url = normalizeUrl(u);
+      return { name: deriveSourceName(url), url };
+    });
+}
+
 export class ComicService {
   listComics() {
     return comicRepository.findAll();
@@ -50,6 +76,10 @@ export class ComicService {
 
   listCategories() {
     return comicCategoryRepository.findAll();
+  }
+
+  countComicsByCreator(userId: number) {
+    return comicRepository.countByCreator(userId);
   }
 
   listDirectory(opts: {
@@ -151,6 +181,7 @@ export class ComicService {
       categoryId: category.id,
       createdById,
       publicationStatus: input.publicationStatus,
+      sources: buildSources(input.officialLegalPlatforms),
     });
   }
 
@@ -197,6 +228,7 @@ export class ComicService {
       categoryId: category.id,
       publicationStatus: input.publicationStatus,
       genreIds,
+      sources: buildSources(input.officialLegalPlatforms),
     });
 
     // Notify favorite / reading-list users when the status actually changes.
@@ -224,6 +256,10 @@ export class ComicService {
     }
 
     return updated;
+  }
+
+  countComics() {
+    return comicRepository.count();
   }
 }
 

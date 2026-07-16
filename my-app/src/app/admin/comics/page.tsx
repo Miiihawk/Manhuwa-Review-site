@@ -13,9 +13,9 @@ function formatStatus(status: string) {
 export default async function AdminComicsPage({
   searchParams,
 }: {
-  searchParams?: { q?: string; category?: string; status?: string };
+  searchParams?: Promise<{ q?: string; category?: string; status?: string }>;
 }) {
-  const resolvedSearchParams = searchParams ?? {};
+  const resolvedSearchParams = (await searchParams) ?? {};
 
   let comics: AdminComicRow[] = [];
 
@@ -75,7 +75,9 @@ export default async function AdminComicsPage({
                 <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f6a1ff]">
                   Total Comics
                 </p>
-                <p className="mt-1 text-lg font-black text-white">{comics.length}</p>
+                <p className="mt-1 text-lg font-black text-white">
+                  {comics.length}
+                </p>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, BookOpen, Heart, Bell, Layers } from "lucide-react";
+import { User, BookOpen, Heart, Bell, Layers, Shield } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 import SearchForm from "../forms/SearchForm";
 import LogoutButton from "./LogoutButton";
@@ -23,6 +23,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -39,6 +40,19 @@ export default function Navbar() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.user?.role === "ADMIN") setIsAdmin(true);
+      })
+      .catch((error) => console.error("Failed to load session:", error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function markAllRead() {
     try {
@@ -79,6 +93,19 @@ export default function Navbar() {
 
         {/* Right Dashboard Icon Navigation Tracks */}
         <nav className="relative flex shrink-0 items-center justify-end gap-1.5 sm:gap-3">
+          {isAdmin && (
+            <Link
+              href="/admin/dashboard"
+              title="Admin Dashboard"
+              aria-label="Admin Dashboard"
+              className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-all duration-200 hover:bg-white/10 hover:text-[#ff018f] active:scale-95"
+            >
+              <Shield className="h-[1.15rem] w-[1.15rem]" />
+              <span className="pointer-events-none absolute -bottom-9 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-[#120529]/95 px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-[0_10px_24px_rgba(0,0,0,0.45)] transition-opacity duration-200 group-hover:opacity-100">
+                Admin Dashboard
+              </span>
+            </Link>
+          )}
           {/* 1. Series Catalog */}
           <Link
             href="/comicseries"

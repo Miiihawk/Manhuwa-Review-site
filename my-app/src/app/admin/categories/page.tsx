@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { categoryService } from "@/app/lib/services/category.service";
 import AddCategoryForm from "./AddCategoryForm";
 import CategoryRow from "./CategoryRow";
+import CategoryList from "./CategoryList";
 
 export const dynamic = "force-dynamic";
 
@@ -59,25 +60,7 @@ export default async function AdminCategoriesPage() {
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#11012e]/70">
-              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-6">
-                <div>
-                  <h2 className="text-2xl font-black text-white">
-                    All categories
-                  </h2>
-                </div>
-              </div>
-
-              {categories.length > 0 ? (
-                <div className="divide-y divide-white/10">
-                  {categories.map((category) => (
-                    <CategoryRow key={category.id} category={category} />
-                  ))}
-                </div>
-              ) : (
-                <p className="px-6 py-10 text-center text-sm text-white/40">
-                  No categories yet — add your first one on the right.
-                </p>
-              )}
+              <CategoryList categories={categories} />
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-[#11012e]/70 p-5 sm:p-6">

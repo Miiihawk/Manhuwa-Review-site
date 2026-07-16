@@ -14,11 +14,19 @@ import ReviewFormModal from "./ReviewFormModal";
 import ReviewComments from "./ReviewComments";
 import ReportButton from "./ReportButton";
 
+const SOURCE_COLORS = [
+  "bg-[#00f56e]/10 text-[#00f56e] border-[#00f56e]/20",
+  "bg-[#ffcc00]/10 text-[#ffcc00] border-[#ffcc00]/20",
+  "bg-[#00a2ff]/10 text-[#00a2ff] border-[#00a2ff]/20",
+  "bg-[#ff018f]/10 text-[#ff018f] border-[#ff018f]/20",
+];
+
 interface TabsContentProps {
   activeSubTab: TabType;
   comic: {
     title: string;
     description?: string;
+    sources?: { name: string; url: string }[];
   };
   slug: string;
   isReviewModalOpen: boolean;
@@ -95,24 +103,6 @@ export default function TabsContent({
   useEffect(() => {
     loadReviews();
   }, [loadReviews]);
-
-  const officialSources = [
-    {
-      name: "WEBTOON",
-      url: "https://www.webtoons.com",
-      logoColor: "bg-[#00f56e]/10 text-[#00f56e] border-[#00f56e]/20",
-    },
-    {
-      name: "Tapas",
-      url: "https://tapas.io",
-      logoColor: "bg-[#ffcc00]/10 text-[#ffcc00] border-[#ffcc00]/20",
-    },
-    {
-      name: "Tappytoon",
-      url: "https://www.tappytoon.com",
-      logoColor: "bg-[#00a2ff]/10 text-[#00a2ff] border-[#00a2ff]/20",
-    },
-  ];
 
   const handleAddReview = async (newReview: {
     text: string;
@@ -270,29 +260,37 @@ export default function TabsContent({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mt-4">
-            {officialSources.map((source) => (
-              <a
-                key={source.name}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-all group active:scale-98"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-8 px-2.5 flex items-center justify-center rounded-lg border text-[10px] font-black tracking-wider uppercase ${source.logoColor}`}
-                  >
-                    {source.name.substring(0, 2)}
+          {comic.sources && comic.sources.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mt-4">
+              {comic.sources.map((source, index) => (
+                <a
+                  key={index}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-all group active:scale-98"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-8 px-2.5 flex items-center justify-center rounded-lg border text-[10px] font-black tracking-wider uppercase ${
+                        SOURCE_COLORS[index % SOURCE_COLORS.length]
+                      }`}
+                    >
+                      {source.name.substring(0, 2)}
+                    </div>
+                    <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors">
+                      Read on {source.name}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors">
-                    Read on {source.name}
-                  </span>
-                </div>
-                <ExternalLink className="h-3.5 w-3.5 text-white/30 group-hover:text-[#ff018f] transition-colors" />
-              </a>
-            ))}
-          </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-white/30 group-hover:text-[#ff018f] transition-colors" />
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-white/40">
+              No official sources have been listed for this series yet.
+            </p>
+          )}
         </div>
       )}
 

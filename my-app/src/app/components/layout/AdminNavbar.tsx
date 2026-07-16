@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   BookOpen,
   Folder,
+  Home,
   MessageSquare,
   Tag,
   User,
@@ -22,6 +23,7 @@ const adminShortcuts = [
   },
   { href: "/admin/genres", label: "Genre Management", icon: Tag },
   { href: "/admin/categories", label: "Category Management", icon: Folder },
+  { href: "/dashboard", label: "View User Site", icon: Home },
 ];
 
 export default function AdminNavbar() {

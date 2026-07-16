@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Ban, Shield, Trash2 } from "lucide-react";
 import { userService } from "@/app/lib/services/user.service";
 import UserFilters from "./UserFilters";
+import UserRowActions from "./UserRowAction";
 
 // SSR: re-render on every request so the admin always sees live data.
 export const dynamic = "force-dynamic";
@@ -21,12 +22,7 @@ export default async function AdminUsersPage({
 
   const usersWithStatus = users.map((user) => ({
     ...user,
-    accountStatus:
-      user.id % 9 === 0
-        ? "DELETED"
-        : user.id % 4 === 0
-          ? "DEACTIVATED"
-          : "ACTIVE",
+    accountStatus: user.isActive ? "ACTIVE" : "DEACTIVATED",
   }));
 
   const filteredUsers = usersWithStatus.filter((user) => {
@@ -79,7 +75,9 @@ export default async function AdminUsersPage({
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#f6a1ff]">
                 Total Users
               </p>
-              <p className="mt-1 text-lg font-black text-white">{users.length}</p>
+              <p className="mt-1 text-lg font-black text-white">
+                {users.length}
+              </p>
             </div>
             <div className="rounded-2xl border border-[#d9ccff]/20 bg-[#11012e]/80 px-4 py-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d9ccff]">
@@ -109,7 +107,9 @@ export default async function AdminUsersPage({
             <div className="divide-y divide-white/10">
               {filteredUsers.length === 0 && (
                 <div className="px-5 py-10 text-center sm:px-6">
-                  <p className="text-sm font-semibold text-white/75">No users found.</p>
+                  <p className="text-sm font-semibold text-white/75">
+                    No users found.
+                  </p>
                   <p className="mt-2 text-sm text-white/45">
                     Try changing filters or your search.
                   </p>
@@ -141,44 +141,13 @@ export default async function AdminUsersPage({
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 lg:justify-end">
-                    <div className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10">
-                      <Shield className="h-4 w-4"/>
-                      <select
-                        defaultValue={user.role}
-                        className="bg-transparent text-sm font-semibold text-white outline-none">
-                        {roleOptions.map((role) => (
-                          <option
-                            key={role}
-                            value={role}
-                            className="bg-[#120529] text-white"
-                          >
-                            {role}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <button
-                      type="button"
-                      className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
-                    >
-                      <Ban className="h-4 w-4" />
-                      Deactivate
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex h-11 items-center gap-2 rounded-full border border-[#f6a1ff]/25 bg-white/5 px-4 text-sm font-semibold text-white transition-colors hover:border-[#ff018f]/50 hover:bg-white/10"
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex h-11 items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-4 text-sm font-semibold text-white transition-colors hover:border-red-400/40 hover:bg-red-500/15"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </button>
-                  </div>
+                  <UserRowActions
+                    user={{
+                      id: user.id,
+                      role: user.role,
+                      isActive: user.isActive,
+                    }}
+                  />
                 </article>
               ))}
             </div>

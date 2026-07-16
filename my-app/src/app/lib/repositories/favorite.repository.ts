@@ -34,6 +34,10 @@ export class FavoriteRepository {
       select: { userId: true },
     });
   }
+
+  count() {
+    return prisma.favorite.count();
+  }
 }
 
 export const favoriteRepository = new FavoriteRepository();

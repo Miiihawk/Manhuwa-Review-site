@@ -49,6 +49,14 @@ export class ReportService {
 
     return { removed: true };
   }
+
+  countPending() {
+    return reportRepository.countPending();
+  }
+
+  countResolvedBy(userId: number) {
+    return reportRepository.countResolvedBy(userId);
+  }
 }
 
 export const reportService = new ReportService();

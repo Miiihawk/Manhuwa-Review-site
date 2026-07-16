@@ -14,6 +14,9 @@ export class ReportRepository {
   findById(id: number) {
     return prisma.report.findUnique({ where: { id } });
   }
+  countResolvedBy(userId: number) {
+    return prisma.report.count({ where: { resolvedById: userId } });
+  }
 
   findAll() {
     return prisma.report.findMany({
@@ -44,6 +47,10 @@ export class ReportRepository {
       where: { id },
       data: { status, resolvedById },
     });
+  }
+
+  countPending() {
+    return prisma.report.count({ where: { status: "PENDING" } });
   }
 }
 

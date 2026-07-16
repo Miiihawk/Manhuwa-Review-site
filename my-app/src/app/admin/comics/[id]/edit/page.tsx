@@ -41,6 +41,7 @@ export default async function AdminComicEditPage({
         genres: comic.genres.map((g) => g.genre.name),
         coverPhoto: comic.coverPhoto,
         synopsis: comic.synopsis,
+        officialLegalPlatforms: comic.sources.map((s) => s.url),
       }}
     />
   );

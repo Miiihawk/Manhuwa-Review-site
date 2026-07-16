@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
+import { put } from "@vercel/blob";
 import { randomUUID } from "crypto";
-import path from "path";
 import { auth } from "@/app/lib/auth";
 
-const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Map([
   ["image/jpeg", "jpg"],
   ["image/png", "png"],
@@ -34,18 +33,16 @@ export async function POST(request: Request) {
     }
     if (file.size > MAX_BYTES) {
       return NextResponse.json(
-        { error: "File too large (max 10MB)" },
+        { error: "File too large (max 4MB)" },
         { status: 400 },
       );
     }
 
-    const bytes = Buffer.from(await file.arrayBuffer());
-    const filename = `${randomUUID()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), bytes);
+    const blob = await put(`avatars/${randomUUID()}.${ext}`, file, {
+      access: "public",
+    });
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error("POST /api/upload/avatar failed:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
