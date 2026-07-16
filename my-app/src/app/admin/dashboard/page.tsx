@@ -193,7 +193,7 @@ export default async function AdminDashboardPage() {
                         </p>
                         <div className="flex items-center justify-end border-t border-white/10 pt-3">
                           <Link
-                            href={`/comic/${comic.id}`}
+                            href={`/${comic.id}`}
                             className="inline-flex items-center gap-2 rounded-full border border-[#fff7e0]/25 bg-[#fff7e0]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#fff7e0] transition-colors hover:border-[#fff7e0]/45 hover:bg-[#fff7e0]/15"
                           >
                             Visit Page
