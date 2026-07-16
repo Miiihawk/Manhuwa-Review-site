@@ -6,14 +6,12 @@ export default async function BrowseGenreSection() {
 
   try {
     const rows = await genreService.listGenres();
-    genres = rows
-      .filter((g) => g._count.comics > 0)
-      .map((g) => ({
-        id: g.id,
-        name: g.name,
-        slug: g.slug,
-        count: g._count.comics,
-      }));
+    genres = rows.map((g) => ({
+      id: g.id,
+      name: g.name,
+      slug: g.slug,
+      count: g._count.comics,
+    }));
   } catch (error) {
     console.error("Error fetching genres:", error);
   }
