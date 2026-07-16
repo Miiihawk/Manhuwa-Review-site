@@ -92,7 +92,7 @@ export default async function FavoritesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center p-3">
                     <div className="flex items-center gap-1.5 w-full">
                       <Link
-                        href={`/comic/${comic.slug}`}
+                        href={`/${comic.slug}`}
                         className="flex-1 inline-flex h-8 items-center justify-center gap-1 rounded-lg bg-white/10 hover:bg-[#ff018f] border border-white/10 text-[11px] font-bold text-white transition-all duration-150 active:scale-95 text-center"
                       >
                         <ExternalLink className="h-3 w-3" /> View

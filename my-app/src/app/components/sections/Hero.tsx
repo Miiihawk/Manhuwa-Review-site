@@ -77,7 +77,7 @@ export default function Hero({ comicList }: HeroProps) {
                 {activeComic.title}
               </h1>
 
-              <p className="mt-6 text-base sm:text-lg text-white/70 leading-8 max-w-xl">
+              <p className="mt-6 text-base sm:text-lg text-white/70 leading-8 max-w-xl line-clamp-5">
                 {description}
               </p>
             </motion.div>

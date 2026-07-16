@@ -41,7 +41,7 @@ export default async function CommunityReviewSection() {
                   {"⭐".repeat(Math.max(0, review.rating))}
                 </div>
                 <Link
-                  href={`/comic/${review.comic.slug}`}
+                  href={`/${review.comic.slug}`}
                   className="text-[10px] font-black uppercase tracking-wider text-white/40 line-clamp-1 max-w-[150px] hover:text-pink-400 transition-colors"
                 >
                   {review.comic.title}

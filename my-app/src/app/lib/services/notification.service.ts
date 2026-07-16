@@ -32,7 +32,7 @@ export class NotificationService {
       createdAt: r.createdAt,
       link:
         r.relatedId != null && slugById.has(r.relatedId)
-          ? `/comic/${slugById.get(r.relatedId)}`
+          ? `/${slugById.get(r.relatedId)}`
           : null,
     }));
   }

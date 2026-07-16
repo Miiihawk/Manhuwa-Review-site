@@ -16,7 +16,7 @@ import RecentlyAddedSection from "../../components/sections/RecentlyAddedSection
 import BrowseGenreSection from "../../components/sections/BrowseGenreSection";
 import CommunityReviewSection from "../../components/sections/CommunityReviewSection";
 
-export const dynamic = "force-dynamic"; // Ensures the page is always rendered fresh on each request
+export const revalidate = 60; // cache the rendered page; re-fetch data at most once per minute
 
 export default async function DashboardPage() {
   let heroComics: {

@@ -67,7 +67,7 @@ function toEntry(r: ReportRow): Entry {
     status: r.status === "DISMISSED" ? "DISMISSED" : "PENDING",
     text: (isReview ? r.review?.review : r.comment?.content) ?? "",
     reason: REASON_LABELS[r.reason] ?? r.reason,
-    link: comic?.slug ? `/comic/${comic.slug}` : null,
+    link: comic?.slug ? `/${comic.slug}` : null,
   };
 }
 
