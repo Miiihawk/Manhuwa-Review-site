@@ -11,6 +11,7 @@ import {
   Edit2,
   Upload,
   Camera,
+  Check,
 } from "lucide-react";
 
 type Props = {
@@ -37,6 +38,28 @@ export default function EditProfileForm({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const passwordChecks = {
+    length: newPassword.length >= 8,
+    lower: /[a-z]/.test(newPassword),
+    upper: /[A-Z]/.test(newPassword),
+    number: /[0-9]/.test(newPassword),
+  };
+  const metCount = Object.values(passwordChecks).filter(Boolean).length;
+  const passwordStrong = metCount === 4;
+  const strengthColor =
+    metCount <= 2
+      ? "bg-red-500"
+      : metCount === 3
+        ? "bg-amber-400"
+        : "bg-emerald-400";
+  const strengthLabel =
+    metCount <= 2 ? "Weak" : metCount === 3 ? "Medium" : "Strong";
+  const requirements = [
+    { ok: passwordChecks.length, label: "At least 8 characters" },
+    { ok: passwordChecks.lower, label: "A lowercase letter" },
+    { ok: passwordChecks.upper, label: "An uppercase letter" },
+    { ok: passwordChecks.number, label: "A number" },
+  ];
 
   function cancel() {
     setUsername(initialUsername);
@@ -79,6 +102,10 @@ export default function EditProfileForm({
     setError(null);
     setSuccess(null);
 
+    if (newPassword && !passwordStrong) {
+      setError("Your new password isn't strong enough.");
+      return;
+    }
     if (newPassword && newPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -180,6 +207,14 @@ export default function EditProfileForm({
         </label>
       </div>
 
+      <input
+        type="url"
+        value={profilePic}
+        onChange={(e) => setProfilePic(e.target.value)}
+        placeholder="…or paste an image URL"
+        className="w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3 text-sm text-white/90 outline-none focus:border-[#ff018f]/50"
+      />
+
       {/* Username */}
       <label className="block">
         <span className="text-[10px] uppercase font-bold tracking-wider text-white/35 flex items-center gap-1.5">
@@ -222,6 +257,42 @@ export default function EditProfileForm({
           placeholder="New password (leave blank to keep current)"
           className="mt-1.5 w-full rounded-2xl bg-black/40 border border-white/10 px-4 py-3 text-sm text-white/90 outline-none focus:border-[#ff018f]/50"
         />
+        {newPassword.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="flex flex-1 gap-1">
+                {[0, 1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 flex-1 rounded-full transition-colors ${
+                      i < metCount ? strengthColor : "bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-[11px] font-semibold text-white/60">
+                {strengthLabel}
+              </span>
+            </div>
+            <ul className="space-y-1">
+              {requirements.map((req) => (
+                <li
+                  key={req.label}
+                  className={`flex items-center gap-1.5 text-xs ${
+                    req.ok ? "text-emerald-400" : "text-white/40"
+                  }`}
+                >
+                  {req.ok ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <X className="h-3 w-3" />
+                  )}
+                  {req.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </label>
 
       {/* Confirm password */}

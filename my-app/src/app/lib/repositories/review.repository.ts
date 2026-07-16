@@ -23,11 +23,51 @@ export class ReviewRepository {
     });
   }
 
+  findByUser(userId: number) {
+    return prisma.review.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        comic: {
+          select: {
+            title: true,
+            slug: true,
+            coverPhoto: true,
+            publicationStatus: true,
+          },
+        },
+      },
+    });
+  }
+
   averageForComic(comicId: number) {
     return prisma.review.aggregate({
       where: { comicId },
       _avg: { rating: true },
     });
+  }
+
+  findRecent(limit: number) {
+    return prisma.review.findMany({
+      where: { NOT: { review: null } },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: {
+        user: { select: { username: true, profilePic: true } },
+        comic: { select: { title: true, slug: true } },
+      },
+    });
+  }
+
+  findById(id: number) {
+    return prisma.review.findUnique({ where: { id } });
+  }
+
+  delete(id: number) {
+    return prisma.review.delete({ where: { id } });
+  }
+  count() {
+    return prisma.review.count();
   }
 }
 

@@ -20,6 +20,7 @@ interface ComicDetailProps {
     category: { name: string } | null;
     genres: { genre: { name: string } }[];
     _count: { reviews: number; favorites: number };
+    sources: { name: string; url: string }[];
   };
   slug: string;
 }
@@ -32,6 +33,7 @@ export default function ComicDetail({ comic, slug }: ComicDetailProps) {
     title: comic.title,
     image: comic.coverPhoto,
     description: comic.synopsis,
+    sources: comic.sources,
   };
 
   const sidebarComic = {

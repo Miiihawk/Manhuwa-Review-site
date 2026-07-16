@@ -55,7 +55,7 @@ export class UserRepository {
       email?: string;
       passwordHash?: string;
       bio?: string;
-      profilePic?: string;
+      isActive?: boolean;
       role?: Role;
     },
   ) {
@@ -64,6 +64,19 @@ export class UserRepository {
       data: data,
       omit: { passwordHash: true },
     });
+  }
+
+  //Delete
+  delete(id: number) {
+    return prisma.user.delete({ where: { id } });
+  }
+
+  countAdmins() {
+    return prisma.user.count({ where: { role: Role.ADMIN } });
+  }
+
+  count() {
+    return prisma.user.count();
   }
 }
 

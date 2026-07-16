@@ -1,15 +1,32 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Star, MessageSquare, ExternalLink, User } from "lucide-react";
+import {
+  Star,
+  MessageSquare,
+  ExternalLink,
+  User,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { TabType } from "../page";
 import ReviewFormModal from "./ReviewFormModal";
+import ReviewComments from "./ReviewComments";
+import ReportButton from "./ReportButton";
+
+const SOURCE_COLORS = [
+  "bg-[#00f56e]/10 text-[#00f56e] border-[#00f56e]/20",
+  "bg-[#ffcc00]/10 text-[#ffcc00] border-[#ffcc00]/20",
+  "bg-[#00a2ff]/10 text-[#00a2ff] border-[#00a2ff]/20",
+  "bg-[#ff018f]/10 text-[#ff018f] border-[#ff018f]/20",
+];
 
 interface TabsContentProps {
   activeSubTab: TabType;
   comic: {
     title: string;
     description?: string;
+    sources?: { name: string; url: string }[];
   };
   slug: string;
   isReviewModalOpen: boolean;
@@ -18,9 +35,11 @@ interface TabsContentProps {
 
 interface Review {
   id: string;
+  userId: number | null;
   user: string;
   avatar: string | null;
   rating: number;
+  rawRating: number;
   date: string;
   text: string;
 }
@@ -33,6 +52,22 @@ export default function TabsContent({
   setIsReviewModalOpen,
 }: TabsContentProps) {
   const [communityReviews, setCommunityReviews] = useState<Review[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
+
+  // Who am I? Needed to show edit/delete only on my own review + comments.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.user?.id) setCurrentUserId(Number(data.user.id));
+      })
+      .catch((error) => console.error("Failed to load session:", error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const loadReviews = useCallback(async () => {
     try {
@@ -47,12 +82,14 @@ export default function TabsContent({
             rating: number;
             review: string | null;
             createdAt: string;
-            user: { username: string; profilePic: string | null };
+            user: { id: number; username: string; profilePic: string | null };
           }) => ({
             id: String(r.id),
+            userId: r.user?.id ?? null,
             user: r.user?.username ?? "Unknown",
             avatar: r.user?.profilePic ?? null,
             rating: r.rating * 2,
+            rawRating: r.rating,
             date: new Date(r.createdAt).toLocaleDateString(),
             text: r.review ?? "",
           }),
@@ -66,24 +103,6 @@ export default function TabsContent({
   useEffect(() => {
     loadReviews();
   }, [loadReviews]);
-
-  const officialSources = [
-    {
-      name: "WEBTOON",
-      url: "https://www.webtoons.com",
-      logoColor: "bg-[#00f56e]/10 text-[#00f56e] border-[#00f56e]/20",
-    },
-    {
-      name: "Tapas",
-      url: "https://tapas.io",
-      logoColor: "bg-[#ffcc00]/10 text-[#ffcc00] border-[#ffcc00]/20",
-    },
-    {
-      name: "Tappytoon",
-      url: "https://www.tappytoon.com",
-      logoColor: "bg-[#00a2ff]/10 text-[#00a2ff] border-[#00a2ff]/20",
-    },
-  ];
 
   const handleAddReview = async (newReview: {
     text: string;
@@ -106,10 +125,26 @@ export default function TabsContent({
         return;
       }
 
-      await loadReviews(); // pull the fresh list from the DB
+      await loadReviews();
     } catch (error) {
       console.error("Review submit failed:", error);
       alert("Could not save review — check your connection.");
+    }
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    if (!confirm("Delete your review? This can't be undone.")) return;
+    try {
+      const res = await fetch(`/api/reviews/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Could not delete review.");
+        return;
+      }
+      await loadReviews();
+    } catch (error) {
+      console.error("Review delete failed:", error);
+      alert("Could not delete review — check your connection.");
     }
   };
 
@@ -175,11 +210,37 @@ export default function TabsContent({
                     <div className="text-[11px] font-bold text-amber-400 flex items-center gap-0.5 bg-amber-400/5 px-2 py-0.5 rounded border border-amber-400/10">
                       <Star className="h-3 w-3 fill-current" /> {rev.rating}/10
                     </div>
+                    {currentUserId !== null && rev.userId === currentUserId && (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setEditingReview(rev)}
+                          title="Edit review"
+                          className="p-1.5 rounded-md bg-white/5 text-white/50 hover:text-white hover:bg-white/10 transition"
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReview(rev.id)}
+                          title="Delete review"
+                          className="p-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                    {currentUserId !== null && rev.userId !== currentUserId && (
+                      <ReportButton target={{ reviewId: Number(rev.id) }} />
+                    )}
                   </div>
                 </div>
                 <p className="text-xs text-white/70 leading-relaxed font-light whitespace-pre-wrap">
                   {rev.text}
                 </p>
+
+                <ReviewComments
+                  reviewId={Number(rev.id)}
+                  currentUserId={currentUserId}
+                />
               </div>
             ))}
           </div>
@@ -199,37 +260,56 @@ export default function TabsContent({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mt-4">
-            {officialSources.map((source) => (
-              <a
-                key={source.name}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-all group active:scale-98"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-8 px-2.5 flex items-center justify-center rounded-lg border text-[10px] font-black tracking-wider uppercase ${source.logoColor}`}
-                  >
-                    {source.name.substring(0, 2)}
+          {comic.sources && comic.sources.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mt-4">
+              {comic.sources.map((source, index) => (
+                <a
+                  key={index}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-all group active:scale-98"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-8 px-2.5 flex items-center justify-center rounded-lg border text-[10px] font-black tracking-wider uppercase ${
+                        SOURCE_COLORS[index % SOURCE_COLORS.length]
+                      }`}
+                    >
+                      {source.name.substring(0, 2)}
+                    </div>
+                    <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors">
+                      Read on {source.name}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors">
-                    Read on {source.name}
-                  </span>
-                </div>
-                <ExternalLink className="h-3.5 w-3.5 text-white/30 group-hover:text-[#ff018f] transition-colors" />
-              </a>
-            ))}
-          </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-white/30 group-hover:text-[#ff018f] transition-colors" />
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-white/40">
+              No official sources have been listed for this series yet.
+            </p>
+          )}
         </div>
       )}
 
-      {/* RENDER SEPARATED FORM MODAL */}
+      {/* Create review modal (parent-controlled) */}
       {isReviewModalOpen && (
         <ReviewFormModal
           comicTitle={comic.title}
           onClose={() => setIsReviewModalOpen(false)}
+          onSubmit={handleAddReview}
+        />
+      )}
+
+      {/* Edit review modal (pre-filled; upsert updates the existing review) */}
+      {editingReview && (
+        <ReviewFormModal
+          comicTitle={comic.title}
+          initialText={editingReview.text}
+          initialRating={editingReview.rawRating}
+          onClose={() => setEditingReview(null)}
           onSubmit={handleAddReview}
         />
       )}

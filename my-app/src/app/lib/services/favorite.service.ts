@@ -47,6 +47,9 @@ export class FavoriteService {
   listForUser(userId: number) {
     return favoriteRepository.findByUser(userId);
   }
+  countAll() {
+    return favoriteRepository.count();
+  }
 }
 
 export const favoriteService = new FavoriteService();

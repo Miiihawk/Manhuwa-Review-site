@@ -460,10 +460,6 @@ export type EnumNotificationTypeFieldUpdateOperationsInput = {
   set?: $Enums.NotificationType
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type NotificationCreateWithoutUserInput = {
   type: $Enums.NotificationType
   message: string

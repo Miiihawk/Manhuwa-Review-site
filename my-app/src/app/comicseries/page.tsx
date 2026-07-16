@@ -1,71 +1,81 @@
 import Navbar from "../components/layout/Navbar";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import SeriesGridCard from "../components/cards/SeriesGridCard";
+import DirectoryControls from "./DirectoryControls";
+import { comicService } from "@/app/lib/services/comic.service";
+import { genreService } from "@/app/lib/services/genre.service";
 
-const seriesDirectoryData = [
-  {
-    id: "debut-or-die",
-    title: "Debut or Die",
-    image: "/images/covers/Debut%20or%20Die.jpg",
-    type: "Manhwa",
-    rating: "8.58",
-    status: "Ongoing",
-    totalReviews: 1420,
-    userScore: "Excellent",
-  },
-  {
-    id: "life-of-a-quack-healer",
-    title: "Life of a Quack Healer",
-    image: "/images/covers/life%20of%20a%20quck%20healer.jpg",
-    type: "Manhwa",
-    rating: "8.12",
-    status: "Ongoing",
-    totalReviews: 834,
-    userScore: "Very Good",
-  },
-  {
-    id: "the-player-hides-his-past",
-    title: "The Player Hides His Past",
-    image: "/images/covers/The%20player%20hides%20his%20past.jpg",
-    type: "Manhwa",
-    rating: "7.80",
-    status: "Ongoing",
-    totalReviews: 512,
-    userScore: "Good",
-  },
-  {
-    id: "the-ultimate-shut-in",
-    title: "The Ultimate Shut In",
-    image: "/images/covers/The%20Ultimate%20Shut%20in.jpg",
-    type: "Manhwa",
-    rating: "8.45",
-    status: "Hiatus",
-    totalReviews: 923,
-    userScore: "Great",
-  },
-  {
-    id: "return-of-the-mad-demon",
-    title: "Return of The Mad Demon",
-    image: "/images/covers/Return%20of%20the%20Mad%20Demon.jpg",
-    type: "Manhwa",
-    rating: "8.09",
-    status: "Ongoing",
-    totalReviews: 2415,
-    userScore: "Very Good",
-  },
-  {
-    id: "the-greatest-estate-developer",
-    title: "The Greatest Estate Developer",
-    image: "/images/covers/The%20Greatest%20Estate%20Developer.jpg",
-    type: "Manhwa",
-    rating: "9.24",
-    status: "Ongoing",
-    totalReviews: 4189,
-    userScore: "Masterpiece",
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default function ComicSeriesPage() {
+function formatStatus(status: string) {
+  return status
+    .toLowerCase()
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function scoreLabel(avg: number | null) {
+  if (avg == null) return "Unrated";
+  if (avg >= 5) return "Masterpiece";
+  if (avg >= 4) return "Great";
+  if (avg >= 3) return "Good";
+  if (avg >= 2) return "Fair";
+  return "Poor";
+}
+
+export default async function ComicSeriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    sort?: string;
+    status?: string;
+    type?: string;
+    genre?: string;
+  }>;
+}) {
+  const params = await searchParams;
+
+  let series: {
+    id: string;
+    title: string;
+    image: string;
+    type: string;
+    rating: string;
+    status: string;
+    totalReviews: number;
+    userScore: string;
+  }[] = [];
+  let categories: { value: string; label: string }[] = [];
+  let genres: { value: string; label: string }[] = [];
+
+  try {
+    const [comics, cats, gens] = await Promise.all([
+      comicService.listDirectory({
+        sort: params.sort,
+        status: params.status,
+        categorySlug: params.type,
+        genreSlug: params.genre,
+      }),
+      comicService.listCategories(),
+      genreService.listGenres(),
+    ]);
+
+    series = comics.map((c) => ({
+      id: c.slug,
+      title: c.title,
+      image: c.coverPhoto,
+      type: c.category?.name ?? "Unknown",
+      rating: c.averageRating != null ? (c.averageRating * 2).toFixed(1) : "—",
+      status: formatStatus(c.publicationStatus),
+      totalReviews: c._count.reviews,
+      userScore: scoreLabel(c.averageRating),
+    }));
+    categories = cats.map((c) => ({ value: c.slug, label: c.name }));
+    genres = gens.map((g) => ({ value: g.slug, label: g.name }));
+  } catch (error) {
+    console.error("Series directory: failed to load:", error);
+  }
+
   return (
     <main className="min-h-screen bg-[#0b021a] text-white pt-28 pb-16">
       <Navbar />
@@ -83,29 +93,26 @@ export default function ComicSeriesPage() {
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/5 pb-4 mb-8 gap-4">
           <div className="text-xs text-white/50 font-medium">
-            Found{" "}
-            <span className="text-white font-bold">
-              {seriesDirectoryData.length}
-            </span>{" "}
+            Found <span className="text-white font-bold">{series.length}</span>{" "}
             indexed series
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-bold text-white/80 border border-white/5 transition active:scale-95">
-              <ArrowUpDown className="h-3.5 w-3.5 text-pink-500" /> Highest
-              Rated <span className="text-white/30 font-light">Descending</span>
-            </button>
-            <button className="flex items-center gap-2 h-9 px-4 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-bold text-white/80 border border-white/5 transition active:scale-95">
-              <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
-            </button>
-          </div>
+          <DirectoryControls categories={categories} genres={genres} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {seriesDirectoryData.map((series) => (
-            <SeriesGridCard key={series.id} series={series} />
-          ))}
-        </div>
+        {series.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {series.map((s) => (
+              <SeriesGridCard key={s.id} series={s} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 rounded-2xl border border-dashed border-white/10 bg-white/[0.01]">
+            <p className="text-sm text-white/40">
+              No series match your filters.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

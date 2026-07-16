@@ -22,8 +22,6 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    /*
-    
     "/dashboard/:path*",
     "/favorites/:path*",
     "/profile/:path*",
@@ -32,7 +30,5 @@ export const config = {
     "/notifications/:path*",
     "/settings/:path*",
     "/admin/:path*",
-
-    */
   ],
 };

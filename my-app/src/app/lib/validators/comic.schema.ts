@@ -12,6 +12,7 @@ export const comicSchema = z.object({
   author: z.string().min(1, "Author is required"),
   genres: z.array(z.string()).min(1, "Pick at least one genre"),
   category: z.string().min(1, "Category is required"),
+  officialLegalPlatforms: z.array(z.string()).max(4).optional(),
   publicationStatus: z.enum(["ONGOING", "COMPLETED", "CANCELLED", "HIATUS"]),
 });
 

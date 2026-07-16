@@ -16,6 +16,7 @@ export class ComicRepository {
       include: {
         category: true,
         genres: { include: { genre: true } },
+        sources: true,
         _count: { select: { reviews: true, favorites: true } },
       },
     });
@@ -44,6 +45,49 @@ export class ComicRepository {
       take,
     });
   }
+  countByCreator(userId: number) {
+    return prisma.comic.count({ where: { createdById: userId } });
+  }
+
+  findForDirectory(
+    filters: {
+      status?: ComicStatus;
+      categorySlug?: string;
+      genreSlug?: string;
+    },
+    sort: "rating" | "reviews" | "recent" | "title",
+  ) {
+    const orderBy =
+      sort === "reviews"
+        ? { reviews: { _count: "desc" as const } }
+        : sort === "recent"
+          ? { createdAt: "desc" as const }
+          : sort === "title"
+            ? { title: "asc" as const }
+            : {
+                averageRating: {
+                  sort: "desc" as const,
+                  nulls: "last" as const,
+                },
+              };
+
+    return prisma.comic.findMany({
+      where: {
+        ...(filters.status ? { publicationStatus: filters.status } : {}),
+        ...(filters.categorySlug
+          ? { category: { slug: filters.categorySlug } }
+          : {}),
+        ...(filters.genreSlug
+          ? { genres: { some: { genre: { slug: filters.genreSlug } } } }
+          : {}),
+      },
+      orderBy,
+      include: {
+        category: true,
+        _count: { select: { reviews: true } },
+      },
+    });
+  }
 
   findById(id: number) {
     return prisma.comic.findUnique({
@@ -51,9 +95,18 @@ export class ComicRepository {
       include: {
         category: true,
         genres: { include: { genre: true } },
+        sources: true,
       },
     });
   }
+
+  findSlugsByIds(ids: number[]) {
+    return prisma.comic.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, slug: true },
+    });
+  }
+
   //Create
 
   create(data: {
@@ -67,8 +120,9 @@ export class ComicRepository {
     createdById: number;
     publicationStatus?: ComicStatus;
     genreIds?: number[];
+    sources?: { name: string; url: string }[];
   }) {
-    const { genreIds, ...comicData } = data;
+    const { genreIds, sources, ...comicData } = data;
 
     return prisma.comic.create({
       data: {
@@ -77,11 +131,13 @@ export class ComicRepository {
           genreIds && genreIds.length > 0
             ? { create: genreIds.map((genreId) => ({ genreId })) }
             : undefined,
+        sources:
+          sources && sources.length > 0 ? { create: sources } : undefined,
       },
     });
   }
 
-  //Update
+  //Update Rating
   updateAverageRating(comicId: number, averageRating: number | null) {
     return prisma.comic.update({
       where: { id: comicId },
@@ -95,7 +151,6 @@ export class ComicRepository {
   }
 
   //Update
-
   update(
     id: number,
     data: {
@@ -108,9 +163,10 @@ export class ComicRepository {
       categoryId: number;
       publicationStatus?: ComicStatus;
       genreIds?: number[];
+      sources?: { name: string; url: string }[];
     },
   ) {
-    const { genreIds, ...comicData } = data;
+    const { genreIds, sources, ...comicData } = data;
 
     return prisma.comic.update({
       where: { id },
@@ -122,6 +178,7 @@ export class ComicRepository {
               create: genreIds.map((genreId) => ({ genreId })),
             }
           : undefined,
+        sources: sources ? { deleteMany: {}, create: sources } : undefined,
       },
     });
   }

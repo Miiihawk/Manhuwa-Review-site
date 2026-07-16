@@ -4,6 +4,46 @@ import { userRepository } from "../repositories/user.repository";
 import { featuredCovers } from "@/app/data/comic";
 import type { ComicInput } from "../validators/comic.schema";
 import { genreRepository } from "../repositories/genre.repository";
+import type { ComicStatus } from "@prisma-generated";
+import { favoriteRepository } from "../repositories/favorite.repository";
+import { readingListRepository } from "../repositories/reading-list.repository";
+import { notificationService } from "./notification.service";
+
+const VALID_SORTS = ["rating", "reviews", "recent", "title"] as const;
+type DirectorySort = (typeof VALID_SORTS)[number];
+
+const VALID_STATUSES: ComicStatus[] = [
+  "ONGOING",
+  "COMPLETED",
+  "COMING_SOON",
+  "HIATUS",
+];
+
+function normalizeUrl(url: string) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+
+function deriveSourceName(url: string) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    const label = host.split(".")[0];
+    return label ? label.charAt(0).toUpperCase() + label.slice(1) : "Official";
+  } catch {
+    return "Official";
+  }
+}
+
+function buildSources(urls?: string[]) {
+  if (!urls) return [];
+  return urls
+    .map((u) => u.trim())
+    .filter((u) => u.length > 0)
+    .slice(0, 4)
+    .map((u) => {
+      const url = normalizeUrl(u);
+      return { name: deriveSourceName(url), url };
+    });
+}
 
 export class ComicService {
   listComics() {
@@ -32,6 +72,37 @@ export class ComicService {
 
   getComicById(id: number) {
     return comicRepository.findById(id);
+  }
+
+  listCategories() {
+    return comicCategoryRepository.findAll();
+  }
+
+  countComicsByCreator(userId: number) {
+    return comicRepository.countByCreator(userId);
+  }
+
+  listDirectory(opts: {
+    sort?: string;
+    status?: string;
+    categorySlug?: string;
+    genreSlug?: string;
+  }) {
+    const sort: DirectorySort = VALID_SORTS.includes(opts.sort as DirectorySort)
+      ? (opts.sort as DirectorySort)
+      : "rating";
+    const status = VALID_STATUSES.includes(opts.status as ComicStatus)
+      ? (opts.status as ComicStatus)
+      : undefined;
+
+    return comicRepository.findForDirectory(
+      {
+        status,
+        categorySlug: opts.categorySlug || undefined,
+        genreSlug: opts.genreSlug || undefined,
+      },
+      sort,
+    );
   }
 
   async seedComics() {
@@ -110,6 +181,7 @@ export class ComicService {
       categoryId: category.id,
       createdById,
       publicationStatus: input.publicationStatus,
+      sources: buildSources(input.officialLegalPlatforms),
     });
   }
 
@@ -146,7 +218,7 @@ export class ComicService {
       }
     }
 
-    return comicRepository.update(id, {
+    const updated = await comicRepository.update(id, {
       title: input.title,
       alternativeName: input.alternativeName || null,
       slug: input.slug,
@@ -156,7 +228,38 @@ export class ComicService {
       categoryId: category.id,
       publicationStatus: input.publicationStatus,
       genreIds,
+      sources: buildSources(input.officialLegalPlatforms),
     });
+
+    // Notify favorite / reading-list users when the status actually changes.
+    if (
+      input.publicationStatus &&
+      input.publicationStatus !== existing.publicationStatus
+    ) {
+      try {
+        const [favUsers, listUsers] = await Promise.all([
+          favoriteRepository.findUserIdsByComic(id),
+          readingListRepository.findUserIdsByComic(id),
+        ]);
+        const recipientIds = [
+          ...new Set([...favUsers, ...listUsers].map((r) => r.userId)),
+        ];
+        await notificationService.notifyComicStatusChange({
+          comicId: id,
+          comicTitle: existing.title,
+          newStatus: input.publicationStatus,
+          recipientIds,
+        });
+      } catch (error) {
+        console.error("Status-change notification failed:", error);
+      }
+    }
+
+    return updated;
+  }
+
+  countComics() {
+    return comicRepository.count();
   }
 }
 

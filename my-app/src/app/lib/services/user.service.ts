@@ -34,9 +34,9 @@ export class UserService {
     if (!user) return null;
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) return null;
+    if (!user.isActive) return null; // deactivated accounts can't log in
     return user;
   }
-
   async seedAdmin() {
     const email = process.env.ADMIN_EMAIL;
     const password = process.env.ADMIN_PASSWORD;
@@ -91,6 +91,48 @@ export class UserService {
     }
 
     return userRepository.update(userId, data);
+  }
+
+  async adminUpdateUser(
+    actorId: number,
+    userId: number,
+    data: { role?: Role; isActive?: boolean },
+  ) {
+    const target = await userRepository.findById(userId);
+    if (!target) throw new Error("USER_NOT_FOUND");
+
+    if (userId === actorId) {
+      if (data.role && data.role !== Role.ADMIN)
+        throw new Error("CANNOT_DEMOTE_SELF");
+      if (data.isActive === false) throw new Error("CANNOT_DEACTIVATE_SELF");
+    }
+
+    if (target.role === Role.ADMIN && data.role && data.role !== Role.ADMIN) {
+      const admins = await userRepository.countAdmins();
+      if (admins <= 1) throw new Error("LAST_ADMIN");
+    }
+
+    return userRepository.update(userId, {
+      ...(data.role ? { role: data.role } : {}),
+      ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+    });
+  }
+
+  async adminDeleteUser(actorId: number, userId: number) {
+    if (userId === actorId) throw new Error("CANNOT_DELETE_SELF");
+
+    const target = await userRepository.findById(userId);
+    if (!target) throw new Error("USER_NOT_FOUND");
+
+    if (target.role === Role.ADMIN) {
+      const admins = await userRepository.countAdmins();
+      if (admins <= 1) throw new Error("LAST_ADMIN");
+    }
+
+    return userRepository.delete(userId);
+  }
+  countUsers() {
+    return userRepository.count();
   }
 }
 

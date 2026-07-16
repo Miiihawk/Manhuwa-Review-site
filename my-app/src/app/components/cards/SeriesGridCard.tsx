@@ -20,7 +20,7 @@ interface SeriesProps {
 export default function SeriesGridCard({ series }: SeriesProps) {
   return (
     <Link
-      href={`/comicseries/${series.id}`}
+      href={`${series.id}`}
       className="group block relative overflow-hidden rounded-2xl border border-white/5 bg-[#120529]/40 p-4 backdrop-blur-sm transition-all duration-300 hover:border-pink-500/30 hover:bg-[#120529]/70 hover:shadow-[0_0_30px_rgba(255,1,143,0.1)] active:scale-[0.99]"
     >
       <div className="flex gap-4">

@@ -68,14 +68,7 @@ export default function LoginForm() {
         />
       </label>
 
-      <div className="flex items-center justify-end text-sm text-white/65">
-        <Link
-          href="/auth/forgot-password"
-          className="text-[#f6a1ff] hover:text-white"
-        >
-          Forgot password?
-        </Link>
-      </div>
+      <div className="flex items-center justify-end text-sm text-white/65"></div>
 
       {formError && <p className="text-sm text-red-400">{formError}</p>}
 

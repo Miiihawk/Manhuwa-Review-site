@@ -27,6 +27,17 @@ export class FavoriteRepository {
   countByUser(userId: number) {
     return prisma.favorite.count({ where: { userId } });
   }
+
+  findUserIdsByComic(comicId: number) {
+    return prisma.favorite.findMany({
+      where: { comicId },
+      select: { userId: true },
+    });
+  }
+
+  count() {
+    return prisma.favorite.count();
+  }
 }
 
 export const favoriteRepository = new FavoriteRepository();

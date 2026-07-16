@@ -26,7 +26,9 @@ export default function AdminComicCreatePage() {
     coverPhoto: "",
     synopsis: "",
   });
-  const [officialLegalPlatforms, setOfficialLegalPlatforms] = useState<string[]>([""]);
+  const [officialLegalPlatforms, setOfficialLegalPlatforms] = useState<
+    string[]
+  >([""]);
 
   //All state
   const [uploadingCover, setUploadingCover] = useState(false);
@@ -70,7 +72,9 @@ export default function AdminComicCreatePage() {
 
   const updateLegalPlatform = (index: number, value: string) => {
     setOfficialLegalPlatforms((current) =>
-      current.map((entry, entryIndex) => (entryIndex === index ? value : entry)),
+      current.map((entry, entryIndex) =>
+        entryIndex === index ? value : entry,
+      ),
     );
   };
 
@@ -360,7 +364,9 @@ export default function AdminComicCreatePage() {
                         key={index}
                         type="url"
                         value={link}
-                        onChange={(event) => updateLegalPlatform(index, event.target.value)}
+                        onChange={(event) =>
+                          updateLegalPlatform(index, event.target.value)
+                        }
                         placeholder="Paste official platform link here"
                         className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
                       />

@@ -30,10 +30,32 @@ export class ReviewService {
     return reviewRepository.findByComic(comicId);
   }
 
+  listForUser(userId: number) {
+    return reviewRepository.findByUser(userId);
+  }
+
   async listReviewsBySlug(slug: string) {
     const comic = await comicRepository.findBySlug(slug);
     if (!comic) return [];
     return reviewRepository.findByComic(comic.id);
+  }
+
+  listRecentReviews(limit = 3) {
+    return reviewRepository.findRecent(limit);
+  }
+
+  async deleteReview(userId: number, reviewId: number) {
+    const existing = await reviewRepository.findById(reviewId);
+    if (!existing) throw new Error("REVIEW_NOT_FOUND");
+    if (existing.userId !== userId) throw new Error("FORBIDDEN");
+
+    const comicId = existing.comicId;
+    await reviewRepository.delete(reviewId);
+    await this.recalcAverage(comicId);
+    return { deleted: true };
+  }
+  countReviews() {
+    return reviewRepository.count();
   }
 }
 

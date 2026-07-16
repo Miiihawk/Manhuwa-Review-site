@@ -56,8 +56,10 @@ export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
 export const ReportReason = {
   SPAM: 'SPAM',
   HARASSMENT: 'HARASSMENT',
-  SPOILER: 'SPOILER',
-  OFF_TOPIC: 'OFF_TOPIC',
+  HATE_SPEECH: 'HATE_SPEECH',
+  INAPPROPRIATE_CONTENT: 'INAPPROPRIATE_CONTENT',
+  MISINFORMATION: 'MISINFORMATION',
+  COPYRIGHT_VIOLATION: 'COPYRIGHT_VIOLATION',
   OTHER: 'OTHER'
 } as const
 
@@ -67,7 +69,8 @@ export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
 export const NotificationType = {
   NEW_COMMENT_REPLY: 'NEW_COMMENT_REPLY',
   NEW_REVIEW_ON_FAVORITE: 'NEW_REVIEW_ON_FAVORITE',
-  ADMIN_ANNOUNCEMENT: 'ADMIN_ANNOUNCEMENT'
+  ADMIN_ANNOUNCEMENT: 'ADMIN_ANNOUNCEMENT',
+  COMIC_STATUS_CHANGE: 'COMIC_STATUS_CHANGE'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
