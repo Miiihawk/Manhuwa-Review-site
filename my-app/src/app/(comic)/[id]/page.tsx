@@ -4,6 +4,10 @@ import ComicDetail from "./ComicDetail";
 
 export type TabType = "synopsis" | "reviews" | "sources";
 
+// Re-generate the page at most once per minute so edits, new reviews, and
+// updated rating/favorite counts show up (instead of being frozen at build time).
+export const revalidate = 60;
+
 // SSG: pre-render a static page for every comic slug at build time.
 export async function generateStaticParams() {
   try {
