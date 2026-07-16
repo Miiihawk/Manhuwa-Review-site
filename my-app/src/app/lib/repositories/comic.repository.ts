@@ -32,6 +32,26 @@ export class ComicRepository {
     return prisma.comic.count();
   }
 
+  search(q: string, take = 6) {
+    return prisma.comic.findMany({
+      where: {
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { alternativeName: { contains: q, mode: "insensitive" } },
+          { author: { contains: q, mode: "insensitive" } },
+          {
+            genres: {
+              some: { genre: { name: { contains: q, mode: "insensitive" } } },
+            },
+          },
+        ],
+      },
+      orderBy: { title: "asc" },
+      take,
+      select: { slug: true, title: true, coverPhoto: true },
+    });
+  }
+
   findRecentlyAdded(take = 6) {
     return prisma.comic.findMany({
       orderBy: { createdAt: "desc" },
@@ -54,6 +74,7 @@ export class ComicRepository {
       status?: ComicStatus;
       categorySlug?: string;
       genreSlug?: string;
+      q?: string;
     },
     sort: "rating" | "reviews" | "recent" | "title",
   ) {
@@ -79,6 +100,34 @@ export class ComicRepository {
           : {}),
         ...(filters.genreSlug
           ? { genres: { some: { genre: { slug: filters.genreSlug } } } }
+          : {}),
+        ...(filters.q
+          ? {
+              OR: [
+                { title: { contains: filters.q, mode: "insensitive" as const } },
+                {
+                  alternativeName: {
+                    contains: filters.q,
+                    mode: "insensitive" as const,
+                  },
+                },
+                {
+                  author: { contains: filters.q, mode: "insensitive" as const },
+                },
+                {
+                  genres: {
+                    some: {
+                      genre: {
+                        name: {
+                          contains: filters.q,
+                          mode: "insensitive" as const,
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            }
           : {}),
       },
       orderBy,

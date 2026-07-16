@@ -31,6 +31,7 @@ export default async function ComicSeriesPage({
     status?: string;
     type?: string;
     genre?: string;
+    q?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -55,6 +56,7 @@ export default async function ComicSeriesPage({
         status: params.status,
         categorySlug: params.type,
         genreSlug: params.genre,
+        q: params.q,
       }),
       comicService.listCategories(),
       genreService.listGenres(),

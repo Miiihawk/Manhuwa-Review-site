@@ -78,6 +78,12 @@ export class ComicService {
     return comicCategoryRepository.findAll();
   }
 
+  async searchComics(q: string, take = 6) {
+    const term = q.trim();
+    if (!term) return [];
+    return comicRepository.search(term, take);
+  }
+
   countComicsByCreator(userId: number) {
     return comicRepository.countByCreator(userId);
   }
@@ -87,6 +93,7 @@ export class ComicService {
     status?: string;
     categorySlug?: string;
     genreSlug?: string;
+    q?: string;
   }) {
     const sort: DirectorySort = VALID_SORTS.includes(opts.sort as DirectorySort)
       ? (opts.sort as DirectorySort)
@@ -100,6 +107,7 @@ export class ComicService {
         status,
         categorySlug: opts.categorySlug || undefined,
         genreSlug: opts.genreSlug || undefined,
+        q: opts.q?.trim() || undefined,
       },
       sort,
     );
