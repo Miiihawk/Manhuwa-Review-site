@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ExternalLink } from "lucide-react";
-import Toast from "@/app/components/ui/Toast";
+import Toast from "@/app/components/UI/Toast";
 
 interface FavoriteComic {
   slug: string;

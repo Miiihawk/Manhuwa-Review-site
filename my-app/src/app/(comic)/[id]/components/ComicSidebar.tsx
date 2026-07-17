@@ -6,7 +6,7 @@ import { Star, Heart, Edit3, Info, Tag, User } from "lucide-react";
 import type { TabType } from "../page";
 import { useState, useEffect } from "react";
 import ReadingListButton from "./ReadingListButton";
-import Toast from "@/app/components/ui/Toast";
+import Toast from "@/app/components/UI/Toast";
 
 interface ComicSidebarProps {
   comic: {
