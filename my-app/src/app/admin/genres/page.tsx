@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft, Edit3, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { genreService } from "@/app/lib/services/genre.service";
 import AddGenreForm from "./AddGenreForm";
-import GenreRow from "./GenreRow";
+import GenreList from "./GenreList";
 
 export const dynamic = "force-dynamic";
 
@@ -58,25 +58,7 @@ export default async function AdminGenresPage() {
           </div>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#11012e]/70">
-              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-6">
-                <div>
-                  <h2 className="text-2xl font-black text-white">All genres</h2>
-                </div>
-              </div>
-
-              {genres.length > 0 ? (
-                <div className="divide-y divide-white/10">
-                  {genres.map((genre) => (
-                    <GenreRow key={genre.id} genre={genre} />
-                  ))}
-                </div>
-              ) : (
-                <p className="px-6 py-10 text-center text-sm text-white/40">
-                  No genres yet — add your first one on the right.
-                </p>
-              )}
-            </div>
+            <GenreList genres={genres} />
 
             <div className="rounded-3xl border border-white/10 bg-[#11012e]/70 p-5 sm:p-6">
               <h2 className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f6a1ff]">
