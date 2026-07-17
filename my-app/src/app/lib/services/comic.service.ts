@@ -3,7 +3,6 @@ import { comicCategoryRepository } from "../repositories/comic-cat.repo";
 import { userRepository } from "../repositories/user.repository";
 import { featuredCovers } from "@/app/data/comic";
 import type { ComicInput } from "../validators/comic.schema";
-import { genreRepository } from "../repositories/genre.repository";
 import { ComicStatus } from "@prisma-generated";
 import { favoriteRepository } from "../repositories/favorite.repository";
 import { readingListRepository } from "../repositories/reading-list.repository";
@@ -40,6 +39,45 @@ function buildSources(urls?: string[]) {
       const url = normalizeUrl(u);
       return { name: deriveSourceName(url), url };
     });
+}
+
+// Resolves a list of genre names to their row ids, reusing existing genres and
+// only creating truly new ones. Matches on slug OR name (case-insensitive) so a
+// name like "Boy's love (BL)" always maps back to its stored row instead of
+// trying to create a duplicate (which would fail the unique-name constraint).
+async function resolveGenreIds(names?: string[]) {
+  const genreIds: number[] = [];
+  if (!names) return genreIds;
+
+  for (const rawName of names) {
+    const genreName = rawName.trim();
+    if (!genreName) continue;
+
+    const genreSlug = slugify(genreName);
+    const where = {
+      OR: [
+        { slug: genreSlug },
+        { name: { equals: genreName, mode: "insensitive" as const } },
+      ],
+    };
+
+    let genre = await prisma.genre.findFirst({ where });
+    if (!genre) {
+      try {
+        genre = await prisma.genre.create({
+          data: { name: genreName, slug: genreSlug },
+        });
+      } catch {
+        // Lost a race, or the genre exists under a slightly different form —
+        // re-fetch rather than failing the whole save.
+        genre = await prisma.genre.findFirst({ where });
+      }
+    }
+
+    if (genre) genreIds.push(genre.id);
+  }
+
+  return genreIds;
 }
 
 export class ComicService {
@@ -163,23 +201,7 @@ export class ComicService {
       });
     }
 
-    const genreIds: number[] = [];
-    if (input.genres) {
-      for (const name of input.genres) {
-        const genreName = name.trim();
-        const genreSlug = slugify(genreName);
-        const genre =
-          (await prisma.genre.findFirst({
-            where: {
-              OR: [{ slug: genreSlug }, { name: genreName }],
-            },
-          })) ??
-          (await prisma.genre.create({
-            data: { name: genreName, slug: genreSlug },
-          }));
-        genreIds.push(genre.id);
-      }
-    }
+    const genreIds = await resolveGenreIds(input.genres);
 
     return comicRepository.create({
       title: input.title,
@@ -217,17 +239,7 @@ export class ComicService {
       });
     }
 
-    const genreIds: number[] = [];
-    if (input.genres) {
-      for (const name of input.genres) {
-        const genreSlug = name.toLowerCase().replace(/\s+/g, "-");
-        let genre = await genreRepository.findBySlug(genreSlug);
-        if (!genre) {
-          genre = await genreRepository.create({ name, slug: genreSlug });
-        }
-        genreIds.push(genre.id);
-      }
-    }
+    const genreIds = await resolveGenreIds(input.genres);
 
     const updated = await comicRepository.update(id, {
       title: input.title,
