@@ -3,6 +3,7 @@ import SeriesGridCard from "../components/cards/SeriesGridCard";
 import DirectoryControls from "./DirectoryControls";
 import { comicService } from "@/app/lib/services/comic.service";
 import { genreService } from "@/app/lib/services/genre.service";
+import { ComicStatus } from "@prisma-generated";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,13 @@ function scoreLabel(avg: number | null) {
   if (avg >= 2) return "Fair";
   return "Poor";
 }
+
+// Derived straight from the Prisma ComicStatus enum, so the filter can never
+// drift out of sync with the schema.
+const statuses = Object.values(ComicStatus).map((s) => ({
+  value: s,
+  label: formatStatus(s),
+}));
 
 export default async function ComicSeriesPage({
   searchParams,
@@ -99,7 +107,11 @@ export default async function ComicSeriesPage({
             indexed series
           </div>
 
-          <DirectoryControls categories={categories} genres={genres} />
+          <DirectoryControls
+            categories={categories}
+            genres={genres}
+            statuses={statuses}
+          />
         </div>
 
         {series.length > 0 ? (

@@ -61,7 +61,7 @@ export async function PATCH(
     }
     if (err instanceof Error && err.message === "USERNAME_TAKEN") {
       return Response.json(
-        { error: "Username already taken" },
+        { error: "Username is already taken." },
         { status: 409 },
       );
     }

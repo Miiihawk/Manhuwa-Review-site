@@ -20,11 +20,7 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* Brand/Description Column */}
           <div className="space-y-4">
-            <BrandLogo
-              href="/dashboard"
-              className="max-w-[14rem]"
-              compact
-            />
+            <BrandLogo href="/dashboard" className="max-w-[14rem]" compact />
             <p className="max-w-md text-xs leading-relaxed font-light text-white/40">
               Your ultimate hub for community reviews. Discover hidden gems,
               rate your favorites, and share your perspective with other
@@ -73,7 +69,7 @@ export default function Footer() {
                 <ul role="list" className="mt-3 space-y-2">
                   <li>
                     <Link
-                      href="/user/favorites"
+                      href="/favorites"
                       className="flex items-center gap-1.5 text-xs transition-colors hover:text-pink-500"
                     >
                       <Heart className="h-3 w-3" /> Favorites

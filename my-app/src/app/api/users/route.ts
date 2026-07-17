@@ -28,12 +28,15 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch (err) {
-    if (err instanceof Error && err.message === "email already exists") {
-      return Response.json({ error: "Email already in use" }, { status: 409 });
-    }
-    if (err instanceof Error && err.message === "Username already taken") {
+    if (err instanceof Error && err.message === "EMAIL_TAKEN") {
       return Response.json(
-        { error: "Username already taken" },
+        { error: "An account with this email already exists." },
+        { status: 409 },
+      );
+    }
+    if (err instanceof Error && err.message === "USERNAME_TAKEN") {
+      return Response.json(
+        { error: "Username is already taken." },
         { status: 409 },
       );
     }

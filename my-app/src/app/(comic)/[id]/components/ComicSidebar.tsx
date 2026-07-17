@@ -6,6 +6,7 @@ import { Star, Heart, Edit3, Info, Tag, User } from "lucide-react";
 import type { TabType } from "../page";
 import { useState, useEffect } from "react";
 import ReadingListButton from "./ReadingListButton";
+import Toast from "@/app/components/ui/Toast";
 
 interface ComicSidebarProps {
   comic: {
@@ -35,6 +36,7 @@ export default function ComicSidebar({
 }: ComicSidebarProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -57,6 +59,7 @@ export default function ComicSidebar({
   async function toggleFavorite() {
     setFavLoading(true);
     try {
+      const wasFavorited = isFavorited;
       const res = await fetch("/api/favorites", {
         method: isFavorited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -73,6 +76,9 @@ export default function ComicSidebar({
       }
 
       setIsFavorited((prev) => !prev);
+      if (wasFavorited) {
+        setToastMessage("Removed from Favorites");
+      }
     } catch (error) {
       console.error("Toggle favorite failed:", error);
       alert("Could not update favorite — check your connection.");
@@ -193,6 +199,10 @@ export default function ComicSidebar({
           </div>
         </div>
       </div>
+
+      {toastMessage && (
+        <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
+      )}
     </div>
   );
 }

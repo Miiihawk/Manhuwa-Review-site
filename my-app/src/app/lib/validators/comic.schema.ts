@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ComicStatus } from "@prisma-enums";
 
 export const comicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -13,7 +14,8 @@ export const comicSchema = z.object({
   genres: z.array(z.string()).min(1, "Pick at least one genre"),
   category: z.string().min(1, "Category is required"),
   officialLegalPlatforms: z.array(z.string()).max(4).optional(),
-  publicationStatus: z.enum(["ONGOING", "COMPLETED", "CANCELLED", "HIATUS"]),
+  // Accepts every value in the schema's ComicStatus enum — stays in sync automatically.
+  publicationStatus: z.enum(ComicStatus),
 });
 
 export type ComicInput = z.infer<typeof comicSchema>;

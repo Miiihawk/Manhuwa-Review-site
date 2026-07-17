@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
+  const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("loggedOut") === "true") {
+      setLogoutMessage("Logged out successfully");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,7 +34,13 @@ export default function LoginForm() {
     });
 
     if (res?.error) {
-      setFormError(res.error || "Invalid email or password");
+      if (res.error === "no_account") {
+        setFormError("No account found with this email address");
+      } else {
+        // NextAuth returns a raw code (e.g. "CredentialsSignin") — never show it.
+        // Stay vague on purpose: don't reveal whether the email exists.
+        setFormError("Invalid email or password. Try Again");
+      }
       setSubmitting(false);
       return;
     }
@@ -69,6 +83,10 @@ export default function LoginForm() {
       </label>
 
       <div className="flex items-center justify-end text-sm text-white/65"></div>
+
+      {logoutMessage && (
+        <p className="text-sm text-green-400">{logoutMessage}</p>
+      )}
 
       {formError && <p className="text-sm text-red-400">{formError}</p>}
 

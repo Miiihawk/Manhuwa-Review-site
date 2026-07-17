@@ -13,22 +13,14 @@ const SORTS: Option[] = [
   { value: "title", label: "Title A–Z" },
 ];
 
-const STATUSES: Option[] = [
-  { value: "ONGOING", label: "Ongoing" },
-  { value: "COMPLETED", label: "Completed" },
-  { value: "HIATUS", label: "Hiatus" },
-  { value: "CANCELLED", label: "Cancelled" },
-  { value: "DROPPED", label: "Dropped" },
-  { value: "MASS_RELEASED", label: "Mass Released" },
-  { value: "COMING_SOON", label: "Coming Soon" },
-];
-
 export default function DirectoryControls({
   categories,
   genres,
+  statuses,
 }: {
   categories: Option[];
   genres: Option[];
+  statuses: Option[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -86,7 +78,7 @@ export default function DirectoryControls({
           <FilterSelect
             label="Status"
             value={status}
-            options={STATUSES}
+            options={statuses}
             onChange={(v) => setParam("status", v)}
           />
           <FilterSelect

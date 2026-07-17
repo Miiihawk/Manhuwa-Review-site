@@ -169,14 +169,6 @@ export default function RegisterForm() {
         </label>
       </div>
 
-      <label className="flex items-start gap-3 text-sm text-white/65">
-        <input
-          type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-[#ff018f] focus:ring-[#ff018f]"
-        />
-        <span>I agree to receive updates and accept the account terms.</span>
-      </label>
-
       {formError && <p className="text-sm text-red-400">{formError}</p>}
 
       <button

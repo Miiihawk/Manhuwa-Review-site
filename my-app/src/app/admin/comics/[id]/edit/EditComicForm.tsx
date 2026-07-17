@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { slugify, normalizeSlugInput } from "@/app/lib/slug";
+import { ComicStatus } from "@prisma-enums";
 import {
   ArrowLeft,
   BookOpen,
@@ -52,6 +53,7 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
   );
 
   const [genreChoices, setGenreChoices] = useState<string[]>([]);
+  const [categoryChoices, setCategoryChoices] = useState<string[]>([]);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [saving, setSaving] = useState(false);
   const [slugEdited, setSlugEdited] = useState(false);
@@ -68,6 +70,20 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
       }
     }
     loadGenres();
+  }, []);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const res = await fetch("/api/categories");
+        if (!res.ok) return;
+        const data = await res.json();
+        setCategoryChoices(data.map((c: { name: string }) => c.name));
+      } catch (error) {
+        console.error("Failed to load categories:", error);
+      }
+    }
+    loadCategories();
   }, []);
 
   const toggleGenre = (genre: string) => {
@@ -269,10 +285,11 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
                       className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
                     >
                       <option value="">Select category</option>
-                      <option value="Manhwa">Manhwa</option>
-                      <option value="Manga">Manga</option>
-                      <option value="Manhua">Manhua</option>
-                      <option value="Webcomics">Webcomics</option>
+                      {categoryChoices.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
                     </select>
                   </label>
 
@@ -288,10 +305,11 @@ export default function EditComicForm({ comic }: EditComicFormProps) {
                       className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-[#f6a1ff] focus:ring-2 focus:ring-[#f6a1ff]/25"
                     >
                       <option value="">Select status</option>
-                      <option value="ONGOING">ONGOING</option>
-                      <option value="COMPLETED">COMPLETED</option>
-                      <option value="HIATUS">HIATUS</option>
-                      <option value="COMING_SOON">COMING_SOON</option>
+                      {Object.values(ComicStatus).map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
                     </select>
                   </label>
                 </div>

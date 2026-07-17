@@ -1,8 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
 import { loginSchema } from "./validators/user.schema";
 import { userService } from "./services/user.service";
+
+class NoAccountError extends CredentialsSignin {
+  code = "no_account";
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -18,7 +22,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Invalid credentials");
         }
 
-        const user = await userService.authenticate(parsed.data);
+        let user;
+        try {
+          user = await userService.authenticate(parsed.data);
+        } catch (err) {
+          if (err instanceof Error && err.message === "USER_NOT_FOUND") {
+            throw new NoAccountError();
+          }
+          throw err;
+        }
+
         if (!user) {
           return null;
         }

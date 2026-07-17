@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
+import Toast from "@/app/components/ui/Toast";
 
 export default function RemoveFavoriteButton({ slug }: { slug: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   async function handleRemove() {
     setLoading(true);
@@ -22,7 +24,7 @@ export default function RemoveFavoriteButton({ slug }: { slug: string }) {
         return;
       }
 
-      router.refresh(); // re-run the server component so the tile disappears
+      setToastMessage("Removed from Favorites");
     } catch (error) {
       console.error("Remove favorite failed:", error);
       alert("Could not remove favorite — check your connection.");
@@ -32,13 +34,25 @@ export default function RemoveFavoriteButton({ slug }: { slug: string }) {
   }
 
   return (
-    <button
-      onClick={handleRemove}
-      disabled={loading}
-      title="Remove from favorites"
-      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500 border border-red-500/20 hover:text-white transition-all duration-150 active:scale-95"
-    >
-      <Heart className="h-3.5 w-3.5 fill-current" />
-    </button>
+    <>
+      <button
+        onClick={handleRemove}
+        disabled={loading}
+        title="Remove from favorites"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500 border border-red-500/20 hover:text-white transition-all duration-150 active:scale-95"
+      >
+        <Heart className="h-3.5 w-3.5 fill-current" />
+      </button>
+
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          onDismiss={() => {
+            setToastMessage(null);
+            router.refresh(); // re-run the server component so the tile disappears, after the toast has shown
+          }}
+        />
+      )}
+    </>
   );
 }

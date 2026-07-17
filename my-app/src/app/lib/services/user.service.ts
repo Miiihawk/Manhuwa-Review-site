@@ -16,8 +16,8 @@ export class UserService {
       userRepository.findByUsername(input.username),
     ]);
 
-    if (existingEmail) throw new Error("Email already exists");
-    if (existingUsername) throw new Error("Username already exists");
+    if (existingEmail) throw new Error("EMAIL_TAKEN");
+    if (existingUsername) throw new Error("USERNAME_TAKEN");
 
     const passwordHash = await bcrypt.hash(input.password, BCRYPT_COST);
 
@@ -31,12 +31,16 @@ export class UserService {
 
   async authenticate(input: LoginInput) {
     const user = await userRepository.findByEmail(input.email);
-    if (!user) return null;
+    if (!user) throw new Error("USER_NOT_FOUND");
+
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) return null;
+
     if (!user.isActive) return null; // deactivated accounts can't log in
+
     return user;
   }
+
   async seedAdmin() {
     const email = process.env.ADMIN_EMAIL;
     const password = process.env.ADMIN_PASSWORD;
