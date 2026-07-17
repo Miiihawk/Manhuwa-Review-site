@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Trash2, Library, ArrowRightLeft } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
+import Toast from "@/app/components/UI/Toast";
 import type { ListEntry } from "./page";
 
 const STATUS_TABS = [
@@ -18,15 +18,20 @@ const STATUS_TABS = [
 ];
 
 export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
-  const router = useRouter();
+  const [items, setItems] = useState(entries);
   const [activeTab, setActiveTab] = useState("READING");
   const [removing, setRemoving] = useState<string | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const filtered = entries.filter((entry) => entry.status === activeTab);
+  const filtered = items.filter((entry) => entry.status === activeTab);
 
   async function handleRemove(slug: string) {
+    const previous = items;
+    // Optimistic: drop the comic and show the toast immediately, then confirm with the API.
+    setItems((prev) => prev.filter((c) => c.slug !== slug));
+    setToast("Comic removed successfully");
     setRemoving(slug);
     try {
       const res = await fetch("/api/reading-list", {
@@ -35,11 +40,13 @@ export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
         body: JSON.stringify({ slug }),
       });
       if (!res.ok) {
+        setItems(previous); // rollback
+        setToast(null);
         alert("Could not remove from list.");
-        return;
       }
-      router.refresh();
     } catch (error) {
+      setItems(previous); // rollback
+      setToast(null);
       console.error("Remove failed:", error);
       alert("Could not remove — check your connection.");
     } finally {
@@ -48,6 +55,13 @@ export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
   }
 
   async function handleMove(slug: string, status: string) {
+    const previous = items;
+    // Optimistic: move the comic to the new shelf and show the toast immediately.
+    setItems((prev) =>
+      prev.map((c) => (c.slug === slug ? { ...c, status } : c)),
+    );
+    setToast("Comic moved successfully");
+    setOpenMenu(null);
     setUpdating(slug);
     try {
       const res = await fetch("/api/reading-list", {
@@ -56,12 +70,13 @@ export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
         body: JSON.stringify({ slug, status }),
       });
       if (!res.ok) {
+        setItems(previous); // rollback
+        setToast(null);
         alert("Could not move to that list.");
-        return;
       }
-      setOpenMenu(null);
-      router.refresh();
     } catch (error) {
+      setItems(previous); // rollback
+      setToast(null);
       console.error("Move failed:", error);
       alert("Could not move — check your connection.");
     } finally {
@@ -97,14 +112,14 @@ export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
           </h1>
           <p className="mt-2 max-w-2xl text-xs sm:text-sm text-white/65 leading-relaxed">
             Organize your collection status and map out what to read next. (
-            {entries.length} titles tracked)
+            {items.length} titles tracked)
           </p>
         </section>
 
         <div className="mt-8 flex gap-2 overflow-x-auto pb-3 scrollbar-none border-b border-white/5">
           {STATUS_TABS.map((tab) => {
             const isActive = activeTab === tab.value;
-            const count = entries.filter((e) => e.status === tab.value).length;
+            const count = items.filter((e) => e.status === tab.value).length;
 
             return (
               <button
@@ -226,6 +241,8 @@ export default function ReadingListView({ entries }: { entries: ListEntry[] }) {
           </div>
         )}
       </div>
+
+      {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
     </main>
   );
 }

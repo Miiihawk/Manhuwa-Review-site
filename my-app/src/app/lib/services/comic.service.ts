@@ -4,7 +4,7 @@ import { userRepository } from "../repositories/user.repository";
 import { featuredCovers } from "@/app/data/comic";
 import type { ComicInput } from "../validators/comic.schema";
 import { genreRepository } from "../repositories/genre.repository";
-import type { ComicStatus } from "@prisma-generated";
+import { ComicStatus } from "@prisma-generated";
 import { favoriteRepository } from "../repositories/favorite.repository";
 import { readingListRepository } from "../repositories/reading-list.repository";
 import { notificationService } from "./notification.service";
@@ -12,12 +12,7 @@ import { notificationService } from "./notification.service";
 const VALID_SORTS = ["rating", "reviews", "recent", "title"] as const;
 type DirectorySort = (typeof VALID_SORTS)[number];
 
-const VALID_STATUSES: ComicStatus[] = [
-  "ONGOING",
-  "COMPLETED",
-  "COMING_SOON",
-  "HIATUS",
-];
+const VALID_STATUSES = Object.values(ComicStatus);
 
 function normalizeUrl(url: string) {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;

@@ -33,18 +33,25 @@ export class ComicRepository {
   }
 
   search(q: string, take = 6) {
+    const words = q.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return Promise.resolve([]);
+
     return prisma.comic.findMany({
       where: {
-        OR: [
-          { title: { contains: q, mode: "insensitive" } },
-          { alternativeName: { contains: q, mode: "insensitive" } },
-          { author: { contains: q, mode: "insensitive" } },
-          {
-            genres: {
-              some: { genre: { name: { contains: q, mode: "insensitive" } } },
+        AND: words.map((word) => ({
+          OR: [
+            { title: { contains: word, mode: "insensitive" } },
+            { alternativeName: { contains: word, mode: "insensitive" } },
+            { author: { contains: word, mode: "insensitive" } },
+            {
+              genres: {
+                some: {
+                  genre: { name: { contains: word, mode: "insensitive" } },
+                },
+              },
             },
-          },
-        ],
+          ],
+        })),
       },
       orderBy: { title: "asc" },
       take,
@@ -104,7 +111,9 @@ export class ComicRepository {
         ...(filters.q
           ? {
               OR: [
-                { title: { contains: filters.q, mode: "insensitive" as const } },
+                {
+                  title: { contains: filters.q, mode: "insensitive" as const },
+                },
                 {
                   alternativeName: {
                     contains: filters.q,
