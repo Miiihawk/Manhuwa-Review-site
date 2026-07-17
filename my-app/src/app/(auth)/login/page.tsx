@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import BrandLogo from "../../components/layout/BrandLogo";
 import LoginForm from "../../components/forms/LoginForm";
@@ -34,7 +35,9 @@ export default function LoginPage() {
                 </h2>
               </div>
 
-              <LoginForm />
+              <Suspense fallback={null}>
+                <LoginForm />
+              </Suspense>
 
               <p className="mt-6 text-center text-sm text-white/65">
                 Don&apos;t have an account?{" "}
