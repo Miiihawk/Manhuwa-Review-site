@@ -8,6 +8,8 @@ import { ComicStatus } from "@prisma-generated";
 import { favoriteRepository } from "../repositories/favorite.repository";
 import { readingListRepository } from "../repositories/reading-list.repository";
 import { notificationService } from "./notification.service";
+import { prisma } from "../prisma";
+import { slugify } from "../slug";
 
 const VALID_SORTS = ["rating", "reviews", "recent", "title"] as const;
 type DirectorySort = (typeof VALID_SORTS)[number];
@@ -164,11 +166,17 @@ export class ComicService {
     const genreIds: number[] = [];
     if (input.genres) {
       for (const name of input.genres) {
-        const genreSlug = name.toLowerCase().replace(/\s+/g, "-");
-        let genre = await genreRepository.findBySlug(genreSlug);
-        if (!genre) {
-          genre = await genreRepository.create({ name, slug: genreSlug });
-        }
+        const genreName = name.trim();
+        const genreSlug = slugify(genreName);
+        const genre =
+          (await prisma.genre.findFirst({
+            where: {
+              OR: [{ slug: genreSlug }, { name: genreName }],
+            },
+          })) ??
+          (await prisma.genre.create({
+            data: { name: genreName, slug: genreSlug },
+          }));
         genreIds.push(genre.id);
       }
     }
