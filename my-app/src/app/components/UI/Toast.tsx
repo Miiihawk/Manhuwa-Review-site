@@ -15,7 +15,7 @@ export default function Toast({
   }, [onDismiss]);
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/10 bg-black/90 px-5 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-md">
+    <div className="fixed top-24 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-white/10 bg-black/90 px-5 py-3 text-sm font-medium text-white shadow-lg backdrop-blur-md">
       {message}
     </div>
   );

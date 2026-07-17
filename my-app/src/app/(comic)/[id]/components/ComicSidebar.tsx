@@ -57,29 +57,34 @@ export default function ComicSidebar({
   }, [slug]);
 
   async function toggleFavorite() {
+    const wasFavorited = isFavorited;
+    setIsFavorited(!wasFavorited);
+    if (wasFavorited) {
+      setToastMessage("Removed from Favorites");
+    }
     setFavLoading(true);
     try {
-      const wasFavorited = isFavorited;
       const res = await fetch("/api/favorites", {
-        method: isFavorited ? "DELETE" : "POST",
+        method: wasFavorited ? "DELETE" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ slug }),
       });
 
       if (res.status === 401) {
+        setIsFavorited(wasFavorited);
+        setToastMessage(null);
         alert("Please log in to favorite comics.");
         return;
       }
       if (!res.ok) {
+        setIsFavorited(wasFavorited);
+        setToastMessage(null);
         alert("Could not update favorite.");
         return;
       }
-
-      setIsFavorited((prev) => !prev);
-      if (wasFavorited) {
-        setToastMessage("Removed from Favorites");
-      }
     } catch (error) {
+      setIsFavorited(wasFavorited);
+      setToastMessage(null);
       console.error("Toggle favorite failed:", error);
       alert("Could not update favorite — check your connection.");
     } finally {
