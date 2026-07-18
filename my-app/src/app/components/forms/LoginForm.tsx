@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
+import Toast from "@/app/components/UI/Toast";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -85,7 +86,10 @@ export default function LoginForm() {
       <div className="flex items-center justify-end text-sm text-white/65"></div>
 
       {logoutMessage && (
-        <p className="text-sm text-green-400">{logoutMessage}</p>
+        <Toast
+          message={logoutMessage}
+          onDismiss={() => setLogoutMessage(null)}
+        />
       )}
 
       {formError && <p className="text-sm text-red-400">{formError}</p>}
