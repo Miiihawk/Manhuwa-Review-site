@@ -1,0 +1,293 @@
+my-app/
+├── generated/
+│   └── prisma/
+│       ├── internal/
+│       │   ├── class.ts
+│       │   ├── prismaNamespace.ts
+│       │   └── prismaNamespaceBrowser.ts
+│       ├── models/
+│       │   ├── Comic.ts
+│       │   ├── ComicCategory.ts
+│       │   ├── ComicGenre.ts
+│       │   ├── ComicSource.ts
+│       │   ├── Comment.ts
+│       │   ├── Favorite.ts
+│       │   ├── Genre.ts
+│       │   ├── Notification.ts
+│       │   ├── ReadingList.ts
+│       │   ├── Report.ts
+│       │   ├── Review.ts
+│       │   └── User.ts
+│       ├── browser.ts
+│       ├── client.ts
+│       ├── commonInputTypes.ts
+│       ├── enums.ts
+│       └── models.ts
+├── prisma/
+│   └── schema.prisma
+├── public/
+│   ├── images/
+│   │   └── covers/
+│   │       ├── Debut or Die.jpg
+│   │       ├── life of a quck healer.jpg
+│   │       ├── Return of the Mad Demon.jpg
+│   │       ├── Tales of Demons and Gods.jpg
+│   │       ├── The Greatest Estate Developer.jpg
+│   │       ├── The player hides his past.jpg
+│   │       ├── The S-Classes That I Raised.jpg
+│   │       └── The Ultimate Shut in.jpg
+│   ├── uploads/
+│   │   ├── 517ec455-fd7b-4e98-a68f-d2b109a78bac.jpg
+│   │   ├── 85a879b7-a6eb-48c9-be80-e199d56e7669.jpg
+│   │   ├── b970a0e7-74c5-4cfa-a4ba-ac55213d26be.jpg
+│   │   ├── f4963192-cead-43c2-9bb3-19a4a94f57f7.jpg
+│   │   └── fa979fc4-9967-4a00-adf5-b8276ff66206.png
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── logo.png
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── src/
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   ├── logout/
+│   │   │   │   └── page.tsx
+│   │   │   ├── register/
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── (comic)/
+│   │   │   └── [id]/
+│   │   │       ├── components/
+│   │   │       │   ├── ComicSidebar.tsx
+│   │   │       │   ├── ComicTabs.tsx
+│   │   │       │   ├── ReadingListButton.tsx
+│   │   │       │   ├── ReportButton.tsx
+│   │   │       │   ├── ReviewComments.tsx
+│   │   │       │   ├── ReviewFormModal.tsx
+│   │   │       │   └── TabsContent.tsx
+│   │   │       ├── ComicDetail.tsx
+│   │   │       └── page.tsx
+│   │   ├── (user)/
+│   │   │   ├── dashboard/
+│   │   │   │   └── page.tsx
+│   │   │   ├── favorites/
+│   │   │   │   ├── FavoritesGrid.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── notifications/
+│   │   │   │   ├── NotificationList.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── profile/
+│   │   │   │   ├── EditProfileForm.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── reading-list/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── ReadingListView.tsx
+│   │   │   ├── reviews/
+│   │   │   │   └── page.tsx
+│   │   │   ├── settings/
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── admin/
+│   │   │   ├── categories/
+│   │   │   │   ├── AddCategoryForm.tsx
+│   │   │   │   ├── CategoryList.tsx
+│   │   │   │   ├── CategoryRow.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── comics/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── edit/
+│   │   │   │   │       ├── EditComicForm.tsx
+│   │   │   │   │       └── page.tsx
+│   │   │   │   ├── create/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── comic-list-client.tsx
+│   │   │   │   ├── comic-types.ts
+│   │   │   │   ├── ComicFiltersBar.tsx
+│   │   │   │   ├── ComicListClient.tsx
+│   │   │   │   ├── DeleteComicButton.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── components/
+│   │   │   │   └── layout/
+│   │   │   │       └── AdminNavbar.tsx
+│   │   │   ├── dashboard/
+│   │   │   │   └── page.tsx
+│   │   │   ├── genres/
+│   │   │   │   ├── AddGenreForm.tsx
+│   │   │   │   ├── GenreList.tsx
+│   │   │   │   ├── GenreRow.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── profile/
+│   │   │   │   └── page.tsx
+│   │   │   ├── reviews/
+│   │   │   │   └── page.tsx
+│   │   │   ├── users/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── UserFilters.tsx
+│   │   │   │   └── UserRowAction.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── loading.tsx
+│   │   ├── api/
+│   │   │   ├── admin/
+│   │   │   │   └── users/
+│   │   │   │       └── [id]/
+│   │   │   │           └── route.ts
+│   │   │   ├── auth/
+│   │   │   │   └── [...nextauth]/
+│   │   │   │       └── route.ts
+│   │   │   ├── categories/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── comics/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── comments/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── favorites/
+│   │   │   │   └── route.ts
+│   │   │   ├── genres/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── notifications/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── reading-list/
+│   │   │   │   └── route.ts
+│   │   │   ├── reports/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── reviews/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── search/
+│   │   │   │   └── route.ts
+│   │   │   ├── upload/
+│   │   │   │   ├── avatar/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── users/
+│   │   │       ├── [id]/
+│   │   │       │   └── route.ts
+│   │   │       └── route.ts
+│   │   ├── comicseries/
+│   │   │   ├── DirectoryControls.tsx
+│   │   │   └── page.tsx
+│   │   ├── components/
+│   │   │   ├── cards/
+│   │   │   │   ├── ComicCard.tsx
+│   │   │   │   ├── DashboardCard.tsx
+│   │   │   │   ├── ReviewCard.tsx
+│   │   │   │   ├── SeriesGridCard.tsx
+│   │   │   │   └── UserCard.tsx
+│   │   │   ├── forms/
+│   │   │   │   ├── ComicForm.tsx
+│   │   │   │   ├── CommentForm.tsx
+│   │   │   │   ├── LoginForm.tsx
+│   │   │   │   ├── RegisterForm.tsx
+│   │   │   │   ├── ReviewForm.tsx
+│   │   │   │   └── SearchForm.tsx
+│   │   │   ├── layout/
+│   │   │   │   ├── AdminNavbar.tsx
+│   │   │   │   ├── AdminSidebar.tsx
+│   │   │   │   ├── BrandLogo.tsx
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   ├── FooterAdmin.tsx
+│   │   │   │   ├── LogoutButton.tsx
+│   │   │   │   ├── MobileNav.tsx
+│   │   │   │   ├── Navbar.tsx
+│   │   │   │   └── UserMenu.tsx
+│   │   │   ├── sections/
+│   │   │   │   ├── BrowseGenreSection.tsx
+│   │   │   │   ├── CommunityReviewSection.tsx
+│   │   │   │   ├── FeaturedCoverSection.tsx
+│   │   │   │   ├── Hero.tsx
+│   │   │   │   ├── HighestRatedSection.tsx
+│   │   │   │   └── RecentlyAddedSection.tsx
+│   │   │   ├── UI/
+│   │   │   │   ├── Badge.tsx
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── FilterDropdown.tsx
+│   │   │   │   ├── Input.tsx
+│   │   │   │   ├── LoadingScreen.tsx
+│   │   │   │   ├── Modal.tsx
+│   │   │   │   ├── Pagination.tsx
+│   │   │   │   ├── RatingStars.tsx
+│   │   │   │   ├── SearchBar.tsx
+│   │   │   │   ├── SortDropdown.tsx
+│   │   │   │   └── Toast.tsx
+│   │   │   └── Hero.tsx
+│   │   ├── data/
+│   │   │   ├── comic.tsx
+│   │   │   ├── comic_category.tsx
+│   │   │   ├── favorites.tsx
+│   │   │   ├── genres.tsx
+│   │   │   ├── reviews.tsx
+│   │   │   └── users.tsx
+│   │   ├── lib/
+│   │   │   ├── repositories/
+│   │   │   │   ├── comic-cat.repo.ts
+│   │   │   │   ├── comic.repository.ts
+│   │   │   │   ├── comment.repository.ts
+│   │   │   │   ├── favorite.repository.ts
+│   │   │   │   ├── genre.repository.ts
+│   │   │   │   ├── notification.repository.ts
+│   │   │   │   ├── reading-list.repository.ts
+│   │   │   │   ├── report.repository.ts
+│   │   │   │   ├── review.repository.ts
+│   │   │   │   └── user.repository.ts
+│   │   │   ├── services/
+│   │   │   │   ├── category.service.ts
+│   │   │   │   ├── comic.service.ts
+│   │   │   │   ├── comment.service.ts
+│   │   │   │   ├── favorite.service.ts
+│   │   │   │   ├── genre.service.ts
+│   │   │   │   ├── notification.service.ts
+│   │   │   │   ├── reading-list.service.ts
+│   │   │   │   ├── report.service.ts
+│   │   │   │   ├── review.service.ts
+│   │   │   │   └── user.service.ts
+│   │   │   ├── validators/
+│   │   │   │   ├── category.schema.ts
+│   │   │   │   ├── comic.schema.ts
+│   │   │   │   ├── comment.schema.ts
+│   │   │   │   ├── genre.schema.ts
+│   │   │   │   ├── reading-list.schema.ts
+│   │   │   │   ├── report.schema.ts
+│   │   │   │   ├── review.schema.ts
+│   │   │   │   └── user.schema.ts
+│   │   │   ├── auth.config.ts
+│   │   │   ├── auth.ts
+│   │   │   ├── prisma.ts
+│   │   │   ├── slug.ts
+│   │   │   └── timeAgo.ts
+│   │   ├── styles/
+│   │   │   └── dashboard.css
+│   │   ├── globals.css
+│   │   ├── icon.png
+│   │   ├── layout.tsx
+│   │   ├── loading.tsx
+│   │   └── page.tsx
+│   ├── instrumentation.ts
+│   └── proxy.ts
+├── .env
+├── .gitignore
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── prisma.config.ts
+├── README.md
+├── tsconfig.json
+└── tsconfig.tsbuildinfo
